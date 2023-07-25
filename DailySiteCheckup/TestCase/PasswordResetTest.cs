@@ -7,12 +7,17 @@ using OpenQA.Selenium;
 using NUnit.Framework;
 using SeleniumNUnitConsoleApp;
 using DailySiteCheckup.Feature;
+using Microsoft.Extensions.Configuration;
 
 namespace DailySiteCheckup.TestCase
 {
     public class PasswordResetTest
     {
         SeleniumTests tests = new SeleniumTests();
+        // Build the configuration
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
         public void MPGSitePasswordReset(IWebDriver driver, Actions builder)
         {
             TestContext.Progress.WriteLine("Execute Forgot Password Test.....");
@@ -28,7 +33,8 @@ namespace DailySiteCheckup.TestCase
         }
         public void ResetPwd(IWebDriver driver, Actions builder)
         {
-            driver.FindElement(By.Id("email")).SendKeys("sitehealthtest14@mailsac.com");
+            string emailId = configuration["TempMailId"];
+            driver.FindElement(By.Id("email")).SendKeys(emailId);
             //Click Send Verification Code 
             IAction send_verification_code_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl1_but_send_code"))).Build();
             send_verification_code_action.Perform();
@@ -36,7 +42,13 @@ namespace DailySiteCheckup.TestCase
 
             // enter otp (temporarily ask for otp to enter manually)
             TestContext.Progress.WriteLine("Enter the Email Verification Code for Forgot Password Test....");
-            string PwdReset_EmailVerificationCode = Console.ReadLine();
+            //string PwdReset_EmailVerificationCode = Console.ReadLine();
+
+            //get the otp through mailsac API end points
+            ReadEmailForOtp readEmail = new ReadEmailForOtp();
+            var task = readEmail.ReadMailsacEmailAPIAsync(emailId);
+            var PwdReset_EmailVerificationCode = task.Result;
+            TestContext.Progress.WriteLine("Email OTP is..." + PwdReset_EmailVerificationCode);
             driver.FindElement(By.Id("VerificationCode")).SendKeys(PwdReset_EmailVerificationCode);
             Thread.Sleep(2000);
 
@@ -46,8 +58,8 @@ namespace DailySiteCheckup.TestCase
             Thread.Sleep(10000);
 
             //set new password and confirm password
-            driver.FindElement(By.Id("newPassword")).SendKeys("Blue@sky123");
-            driver.FindElement(By.Id("reenterPassword")).SendKeys("Blue@sky123");
+            driver.FindElement(By.Id("newPassword")).SendKeys(configuration["PasswordReset"]);
+            driver.FindElement(By.Id("reenterPassword")).SendKeys(configuration["PasswordReset"]);
             IAction continue_action1 = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             continue_action1.Perform();
             Thread.Sleep(15000);

@@ -10,12 +10,18 @@ using System.Xml.Linq;
 using SeleniumNUnitConsoleApp;
 using OpenQA.Selenium.Support.UI;
 using NUnit.Framework;
+using Microsoft.Extensions.Configuration;
 
 namespace DailySiteCheckup.TestCase
 {
     public class AccountDetailsUpdate
     {
         // SeleniumTests tests = new SeleniumTests();
+
+        // Build the configuration
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
         public void AccountSettings(IWebDriver driver, Actions builder, string ProfileEditFlag)
         {
 
@@ -79,9 +85,9 @@ namespace DailySiteCheckup.TestCase
             Thread.Sleep(6000);
 
             //update the password to input fields
-            driver.FindElement(By.Id("oldPassword")).SendKeys("Test@123");
-            driver.FindElement(By.Id("newPassword")).SendKeys("MPGTest@123");
-            driver.FindElement(By.Id("reenterPassword")).SendKeys("MPGTest@123");
+            driver.FindElement(By.Id("oldPassword")).SendKeys(configuration["FirstPassword"]);
+            driver.FindElement(By.Id("newPassword")).SendKeys(configuration["PasswordUpdate"]);
+            driver.FindElement(By.Id("reenterPassword")).SendKeys(configuration["PasswordUpdate"]);
 
             //click on continue
             IAction continue_action = builder.Click(driver.FindElement(By.Id("continue"))).Build();
@@ -169,13 +175,13 @@ namespace DailySiteCheckup.TestCase
             IWebElement fname = driver.FindElement(By.Id("givenName"));
             IWebElement sname = driver.FindElement(By.Id("surname"));
             fname.Clear(); sname.Clear();
-            fname.SendKeys("Fname");
-            sname.SendKeys("Sname");
+            fname.SendKeys(configuration["ResetFirstName"]);
+            sname.SendKeys(configuration["ResetSecondName"]);
 
             //click on continue
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             submitAction.Perform();
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
 
             //check if user-icon is present return assert true
             IWebElement element = driver.FindElement(By.ClassName("login"));

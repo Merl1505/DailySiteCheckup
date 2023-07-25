@@ -16,6 +16,10 @@ namespace DailySiteCheckup.Feature
             driver.Navigate().GoToUrl(url);
             driver.Manage().Window.Maximize();
             Thread.Sleep(6000);
+
+            //ReadFromExcel readFromExcel = new ReadFromExcel();
+            //readFromExcel.GroupSiteandColumns("")
+
             // check if cookies popup appear
             //IWebElement CookiePopupelement = driver.FindElement(By.Id("onetrust-group-container"));
             //string CookiePopupAttr = CookiePopupelement.GetAttribute("id");

@@ -1,5 +1,6 @@
 ﻿using DailySiteCheckup.Feature;
 using DailySiteCheckup.Feature;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -10,6 +11,10 @@ namespace DailySiteCheckup.TestCase
 
     public class LoginTest
     {
+        // Build the configuration
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
         //  SeleniumTests tests = new SeleniumTests();
         public void MPGSiteLoginTest(IWebDriver driver, Actions builder, List<TestResult> tests)
         {
@@ -25,8 +30,8 @@ namespace DailySiteCheckup.TestCase
         {
             //enter login credentials
 
-            driver.FindElement(By.Id("signInName")).SendKeys("sitehealthtest14@mailsac.com");
-            driver.FindElement(By.Id("password")).SendKeys("Test@123");
+            driver.FindElement(By.Id("signInName")).SendKeys(configuration["TempMailId"]);
+            driver.FindElement(By.Id("password")).SendKeys(configuration["FirstPassword"]);
             Thread.Sleep(1000);
 
             //click on submit

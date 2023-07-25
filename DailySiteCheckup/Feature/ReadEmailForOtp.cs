@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Net.Http.Headers;
 
@@ -6,13 +7,16 @@ namespace DailySiteCheckup.Feature
 {
     public class ReadEmailForOtp
     {
-
-        public async Task ReadMailsacEmailAPIAsync()
+        // Build the configuration
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+        public async Task<string> ReadMailsacEmailAPIAsync(string emailId)
         {
-            string apiKey = "k_pvZeVs1pfqIaEtZfvw6YrPSQE2g6FHIb3vjwZ";
-
+            string apiKey = configuration["ApiKey"];
+            string EmailOTP = "";
             // Base URL for the Mailsac API
-            string apiUrl = "https://mailsac.com/api";
+            string apiUrl = configuration["ApiUrl"]; ;
 
             // Create the HttpClient
             using (HttpClient httpClient = new HttpClient())
@@ -24,7 +28,8 @@ namespace DailySiteCheckup.Feature
 
                 try
                 {
-                    //1. Get list of email addresses associated with your Mailsac account
+                    /* 1. Get list of email addresses associated with your Mailsac account
+                    (temporarily not required)
                     string emailAddressesUrl = $"{apiUrl}/addresses";
                     HttpResponseMessage emailAddressesResponse = await httpClient.GetAsync(emailAddressesUrl);
                     emailAddressesResponse.EnsureSuccessStatusCode();
@@ -32,10 +37,10 @@ namespace DailySiteCheckup.Feature
                     var emailList = System.Text.Json.JsonSerializer.Deserialize<ReadMailsac[]>(emailAddresses);
 
                     // Assuming you want to read emails from the first email address in the list
-                    string emailAddress = emailList[0].Id;
+                    string emailAddress = emailList[0].Id;   (temporarily not required) */
 
                     // 2. Get list of emails for the chosen email address
-                    string emailsUrl = $"{apiUrl}/addresses/{emailAddress}/messages";
+                    string emailsUrl = $"{apiUrl}/addresses/{emailId}/messages";
                     HttpResponseMessage emailsResponse = await httpClient.GetAsync(emailsUrl);
                     emailsResponse.EnsureSuccessStatusCode();
                     string emailsJson = await emailsResponse.Content.ReadAsStringAsync();
@@ -43,7 +48,7 @@ namespace DailySiteCheckup.Feature
                     string messageId = emailDetails[0].MessageId;
 
                     //3. call the get message html body end point
-                    string messageURL = $"{apiUrl}/body/{emailAddress}/{messageId}";
+                    string messageURL = $"{apiUrl}/body/{emailId}/{messageId}";
                     HttpResponseMessage inboxEmailResponse = await httpClient.GetAsync(messageURL);
                     inboxEmailResponse.EnsureSuccessStatusCode();
                     string inboxEmailJson = await inboxEmailResponse.Content.ReadAsStringAsync();
@@ -66,9 +71,7 @@ namespace DailySiteCheckup.Feature
                         string nextWord = nextWordEndIndex == -1
                            ? text.Substring(nextWordStartIndex + 1)
                            : text.Substring(nextWordStartIndex + 1, nextWordEndIndex - nextWordStartIndex - 1);
-                        string EmailOTP = nextWord;
-                        TestContext.Progress.WriteLine("Email OTP is..." + nextWord);
-
+                        EmailOTP = nextWord;
                     }
                     else
                     {
@@ -82,7 +85,7 @@ namespace DailySiteCheckup.Feature
                     Console.WriteLine("Error reading emails: " + ex.Message);
                 }
             }
-
+            return await Task.Run(() => { return EmailOTP; });
         }
 
     }

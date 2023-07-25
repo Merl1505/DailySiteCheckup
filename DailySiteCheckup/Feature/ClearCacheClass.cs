@@ -31,5 +31,4 @@ namespace DailySiteCheckup.Feature
             }
         }
     }
-
 }

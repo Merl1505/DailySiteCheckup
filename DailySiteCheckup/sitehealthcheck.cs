@@ -15,7 +15,7 @@ namespace SeleniumNUnitConsoleApp
         private IWebDriver driver;
         private Actions builder;
         public List<TestResult> testResults { get; set; }
-        public static string ?ProfileEditFlag { get; set; }
+        public static string ProfileEditFlag { get; set; }
 
         public SeleniumTests()
         {
@@ -111,12 +111,6 @@ namespace SeleniumNUnitConsoleApp
     {
         static int Main(string[] args)
         {
-            //ReadFromExcel readFromExcel = new ReadFromExcel();
-            //readFromExcel.GroupSiteandColumns("path");
-            ReadEmailForOtp readEmail = new ReadEmailForOtp();
-            Task callAsyncReadEmailTask = readEmail.ReadMailsacEmailAPIAsync();
-            callAsyncReadEmailTask.Wait(); // wait for the async method to get completed
-
             var testAssembly = Assembly.GetExecutingAssembly();
             //Console.ReadLine();
             return new AutoRun(testAssembly).Execute(args);
