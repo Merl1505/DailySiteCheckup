@@ -16,21 +16,21 @@ namespace DailySiteCheckup.TestCase
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
         //  SeleniumTests tests = new SeleniumTests();
-        public void MPGSiteLoginTest(IWebDriver driver, Actions builder, List<TestResult> tests)
+        public void MPGSiteLoginTest(IWebDriver driver, Actions builder, List<TestResult> tests,string emailId)
         {
             TestContext.Progress.WriteLine("Execute Login Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
-            EnterCredentials(driver, builder, tests);
+            EnterCredentials(driver, builder, tests, emailId);
             //ReadFromExcel readFromExcel = new ReadFromExcel();
             //string test = readFromExcel.dataDictionary["1-1"];
 
         }
-        public void EnterCredentials(IWebDriver driver, Actions builder, List<TestResult> tests)
+        public void EnterCredentials(IWebDriver driver, Actions builder, List<TestResult> tests, string emailId)
         {
             //enter login credentials
 
-            driver.FindElement(By.Id("signInName")).SendKeys(configuration["TempMailId"]);
+            driver.FindElement(By.Id("signInName")).SendKeys(emailId);
             driver.FindElement(By.Id("password")).SendKeys(configuration["FirstPassword"]);
             Thread.Sleep(1000);
 

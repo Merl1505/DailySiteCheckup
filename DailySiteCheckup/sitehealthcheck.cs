@@ -1,11 +1,15 @@
 ﻿using DailySiteCheckup.Feature;
 using DailySiteCheckup.TestCase;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using NUnitLite;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using System.Reflection;
+using System;
+using System.IO;
+using System.Runtime;
 
 namespace SeleniumNUnitConsoleApp
 {
@@ -16,7 +20,7 @@ namespace SeleniumNUnitConsoleApp
         private Actions builder;
         public List<TestResult> testResults { get; set; }
         public static string ProfileEditFlag { get; set; }
-
+        public string MailIdToTest { get; set; }
         public SeleniumTests()
         {
             testResults = new List<TestResult>();
@@ -27,6 +31,7 @@ namespace SeleniumNUnitConsoleApp
             //Set up the ChromeDriver
             driver = new ChromeDriver();
             builder = new Actions(driver);
+            
         }
 
         [Test]
@@ -34,7 +39,9 @@ namespace SeleniumNUnitConsoleApp
         public void SignupTest()
         {
             SignupTest signupTest = new SignupTest();
-            signupTest.MPGSiteSignupTest(driver, builder);
+            CreateTestingEmail createTestingEmail = new CreateTestingEmail();
+            MailIdToTest = createTestingEmail.GenerateTestingEmail();
+            signupTest.MPGSiteSignupTest(driver, builder,MailIdToTest);
             Cleanup();
 
         }
@@ -44,7 +51,7 @@ namespace SeleniumNUnitConsoleApp
         {
             Setup();
             LoginTest logintest = new LoginTest();
-            logintest.MPGSiteLoginTest(driver, builder, testResults);
+            logintest.MPGSiteLoginTest(driver, builder, testResults,MailIdToTest);
         }
         [Test]
         [Order(6)]
@@ -53,7 +60,7 @@ namespace SeleniumNUnitConsoleApp
             //Forgot Password flow
             Setup();
             PasswordResetTest passwordReset = new PasswordResetTest();
-            passwordReset.MPGSitePasswordReset(driver, builder);
+            passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
             Cleanup();
         }
         [Test]
@@ -98,13 +105,9 @@ namespace SeleniumNUnitConsoleApp
         [OneTimeTearDown]
         public void Cleanup()
         {
-            //ClearCacheClass clearCache = new ClearCacheClass();
-            //clearCache.Clearbrowsercache();
-
-            // Clean up the driver
-            Console.ReadLine();
             driver.Quit();
         }
+       
     }
 
     class Program

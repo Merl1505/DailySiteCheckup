@@ -19,7 +19,7 @@ namespace DailySiteCheckup.TestCase
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        public void MPGSiteSignupTest(IWebDriver driver, Actions builder)
+        public void MPGSiteSignupTest(IWebDriver driver, Actions builder,string emailId)
         {
             TestContext.Progress.WriteLine("Execute Signup Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
@@ -41,7 +41,7 @@ namespace DailySiteCheckup.TestCase
 
             //enter email
             string tempEmailId = configuration["TempMailId"];
-            driver.FindElement(By.Id("email")).SendKeys(tempEmailId);
+            driver.FindElement(By.Id("email")).SendKeys(emailId);
 
             //click send verification code 
             IAction SendEmailVerification_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl_but_send_code"))).Build();
@@ -54,7 +54,7 @@ namespace DailySiteCheckup.TestCase
 
             //get the otp through mailsac API end points
             ReadEmailForOtp readEmail = new ReadEmailForOtp();
-            var task = readEmail.ReadMailsacEmailAPIAsync(tempEmailId);
+            var task = readEmail.ReadMailsacEmailAPIAsync(emailId);
             var OTP_input = task.Result;
             string Signup_EmailVerificationCode = OTP_input.Substring(0, 4);
             TestContext.Progress.WriteLine("Email OTP is..." + Signup_EmailVerificationCode);
@@ -72,9 +72,9 @@ namespace DailySiteCheckup.TestCase
             driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
             driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
 
-            // click on check box and radio buttons
-            IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsented_True"))).Build();
-            actionchkbox.Perform();
+            //// click on check box and radio buttons
+            //IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsented_True"))).Build();
+            //actionchkbox.Perform();
 
             //click on submit
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
@@ -85,6 +85,14 @@ namespace DailySiteCheckup.TestCase
             IWebElement labelAccountCreated = (IWebElement)driver.FindElement(By.XPath("//div[@class = 'attrEntry']/label[@for = 'successhdg']"));
             bool account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
             Assert.IsTrue(account_created_txt);
+
+            //update app settings
+            //string appSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+            //string nextcounter = configuration["counter"] + 1;
+            //CreateTestingEmail createTestingEmail = new CreateTestingEmail();
+            //createTestingEmail.UpdateAppSettings(appSettingsPath,"counter",nextcounter);
+
+            // print test result
             if (account_created_txt)
             {
                 TestContext.Progress.WriteLine("Signup Success.....");

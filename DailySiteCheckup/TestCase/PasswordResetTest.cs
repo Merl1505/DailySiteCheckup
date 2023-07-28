@@ -1,13 +1,9 @@
-﻿using System.Reflection;
-using OpenQA.Selenium.Interactions;
-using System.Xml;
-using DailySiteCheckup.Feature;
-using DailySiteCheckup.TestCase;
-using OpenQA.Selenium;
-using NUnit.Framework;
-using SeleniumNUnitConsoleApp;
-using DailySiteCheckup.Feature;
+﻿using DailySiteCheckup.Feature;
 using Microsoft.Extensions.Configuration;
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
+using SeleniumNUnitConsoleApp;
 
 namespace DailySiteCheckup.TestCase
 {
@@ -18,7 +14,7 @@ namespace DailySiteCheckup.TestCase
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
-        public void MPGSitePasswordReset(IWebDriver driver, Actions builder)
+        public void MPGSitePasswordReset(IWebDriver driver, Actions builder, List<TestResult> tests,string emailId)
         {
             TestContext.Progress.WriteLine("Execute Forgot Password Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
@@ -28,12 +24,12 @@ namespace DailySiteCheckup.TestCase
             IAction submitAction = builder.Click(driver.FindElement(By.Id("forgotPassword"))).Build();
             submitAction.Perform();
             Thread.Sleep(12000);
-            ResetPwd(driver, builder);
+            ResetPwd(driver, builder,tests,emailId);
 
         }
-        public void ResetPwd(IWebDriver driver, Actions builder)
+        public void ResetPwd(IWebDriver driver, Actions builder, List<TestResult> tests,string emailId)
         {
-            string emailId = configuration["TempMailId"];
+            //string emailId = configuration["TempMailId"];
             driver.FindElement(By.Id("email")).SendKeys(emailId);
             //Click Send Verification Code 
             IAction send_verification_code_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl1_but_send_code"))).Build();
@@ -71,12 +67,12 @@ namespace DailySiteCheckup.TestCase
             if (currentUrl.Contains("signup_signin"))
             {
                 TestContext.Progress.WriteLine("Password reset success....");
-                tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Password Reset" });
+                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Password Reset" });
             }
             else
             {
                 TestContext.Progress.WriteLine("Password reset failed....");
-                tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Password Reset" });
+                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Password Reset" });
             }
 
         }

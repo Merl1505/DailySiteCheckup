@@ -40,4 +40,8 @@ namespace DailySiteCheckup.Feature
     {
         public string HtmlContent { get; set; }
     }
+    public class EmailCounter
+    {
+        public int counter { get; set;}
+    }
 }
