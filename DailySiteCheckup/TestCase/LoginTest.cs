@@ -1,10 +1,8 @@
 ﻿using DailySiteCheckup.Feature;
-using DailySiteCheckup.Feature;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using SeleniumNUnitConsoleApp;
 
 namespace DailySiteCheckup.TestCase
 {

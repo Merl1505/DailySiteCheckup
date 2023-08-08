@@ -80,27 +80,27 @@ namespace DailySiteCheckup.TestCase
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             submitAction.Perform();
             Thread.Sleep(5000);
-
+            //find if error has occured 
+            IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
+            bool IsError = labelerror.Text.Contains("incorrect.");
+            bool account_created_txt;
             // get test result
-            IWebElement labelAccountCreated = (IWebElement)driver.FindElement(By.XPath("//div[@class = 'attrEntry']/label[@for = 'successhdg']"));
-            bool account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
-            Assert.IsTrue(account_created_txt);
-
-            //update app settings
-            //string appSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
-            //string nextcounter = configuration["counter"] + 1;
-            //CreateTestingEmail createTestingEmail = new CreateTestingEmail();
-            //createTestingEmail.UpdateAppSettings(appSettingsPath,"counter",nextcounter);
-
-            // print test result
-            if (account_created_txt)
+            if (!IsError)
             {
-                TestContext.Progress.WriteLine("Signup Success.....");
-                tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "SignUp" });
+                IWebElement labelAccountCreated = (IWebElement)driver.FindElement(By.XPath("//div[@class = 'attrEntry']/label[@for = 'successhdg']"));
+                account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
+                Assert.IsTrue(account_created_txt);
+                if (account_created_txt)
+                {
+                    TestContext.Progress.WriteLine("Signup Success.....");
+                    tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "SignUp" });
+                }
+               
             }
+
             else
             {
-                TestContext.Progress.WriteLine("Signup Failed.....");
+                TestContext.Progress.WriteLine("Signup Failed.....Incorrect username and password combinations");
                 tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "SignUp" });
             }
 
