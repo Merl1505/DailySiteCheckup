@@ -1,6 +1,7 @@
 ﻿using ExcelDataReader;
 using OfficeOpenXml;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -14,61 +15,78 @@ namespace DailySiteCheckup.Feature
     {
         // Create a dictionary to store the grouped data
         Dictionary<string, List<string>> groupedData { get; set; }
+        
+       public static Dictionary<string, Dictionary<string, string>> SiteDetailsDic { get; set; }
+       public static Dictionary<string, Dictionary<string, string>> SignupDetailsDic { get; set; }
+        public static Dictionary<string, string>[] dictionaries = new Dictionary<string, string>[2];
+        public static string SiteURL { get; set; }
+        // public static Dictionary<string, Dictionary<string, string>>[] dictionaries { get; set; }
+
         public ReadFromExcel()
         {
             groupedData = new Dictionary<string, List<string>>();
+            SiteDetailsDic = new Dictionary<string, Dictionary<string, string>>();
+            SignupDetailsDic = new Dictionary<string, Dictionary<string, string>>();
+           
+
+            // ReturnSiteData();
         }
-
-        public void GroupSiteandColumns(string filePath)
+        public static void ReturnSiteData()
         {
-            // Load the Excel file
-            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            SiteDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
+            SignupDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 1);
+            //dictionaries[0] = SiteDetailsDic;
+            //dictionaries[1] = SignupDetailsDic;
+            //return dictionaries;
+        }
+        public static Dictionary<string,Dictionary<string,string>> GroupSiteandColumns(string filePath,int worksheet_num)
+        {
+            Dictionary<string, Dictionary<string, string>> nestedDictionary = new Dictionary<string, Dictionary<string, string>>();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            try
             {
-                // Get the first worksheet in the Excel file
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-                string worksheet_name = package.Workbook.Worksheets[1].Name;
-                // Find the dimensions of the worksheet
-                int rowCount = worksheet.Dimension.Rows;
-                int columnCount = worksheet.Dimension.Columns;
-                //Determine the column index to group by
-                int groupByColumnIndex = 1;
-                //Iterate through each row
-                for (int row = 2; row <= rowCount; row++)
+                // Load the Excel file
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
-                    // Get the value of the group by column
-                    var groupByKey = worksheet.Cells[row, groupByColumnIndex].Value?.ToString();
+                    // Get the first worksheet
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[worksheet_num];
 
-                    // Skip if the group by column is empty
-                    if (string.IsNullOrEmpty(groupByKey))
-                        continue;
+                    // Initialize a nested dictionary to store data
+                    int headerRow = 1;
 
-                    // Get the value of the data column
-                    var dataValue = worksheet.Cells[row, groupByColumnIndex + 1].Value?.ToString();
-
-                    // Check if the group by key already exists in the dictionary
-                    if (groupedData.ContainsKey(groupByKey))
+                    // Start from row 2 to read data
+                    for (int row = headerRow + 1; row <= worksheet.Dimension.End.Row; row++)
                     {
-                        // Add the data value to the existing group
-                        groupedData[groupByKey].Add(dataValue);
-                    }
-                    else
-                    {
-                        // Create a new group with the data value
-                        groupedData[groupByKey] = new List<string> { dataValue };
-                    }
-                }
+                        // Initialize a dictionary to store values for the current row
+                        Dictionary<string, string> rowData = new Dictionary<string, string>();
 
-                // Iterate through the grouped data and print the results
-                foreach (var group in groupedData)
-                {
-                    string groupKey = group.Key;
-                    List<string> dataValues = group.Value;
+                        // Iterate through the columns
+                        for (int col = worksheet.Dimension.Start.Column; col <= worksheet.Dimension.End.Column; col++)
+                        {
+                            // Get the header text from the header row
+                            string header = worksheet.Cells[headerRow, col].Text;
 
-                    Console.WriteLine($"Group: {groupKey}");
-                    Console.WriteLine("Data Values: " + string.Join(", ", dataValues));
-                    Console.WriteLine();
+                            // Get the value from the current row and column
+                            string value = worksheet.Cells[row, col].Text;
+
+                            // Add the value to the current row's dictionary
+                            rowData.Add(header, value);
+                        }
+
+                        // Get the key for the nested dictionary (e.g., a unique identifier)
+                        string key = worksheet.Cells[row, 1].Text; 
+
+                        // Add the current row's dictionary to the nested dictionary
+                        nestedDictionary.Add(key, rowData);
+                    }
+
                 }
             }
+            catch(Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            return nestedDictionary;
 
         }
     }

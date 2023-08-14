@@ -1,9 +1,11 @@
 ﻿using DailySiteCheckup.Feature;
 using Microsoft.Extensions.Configuration;
+using Microsoft.SharePoint.Marketplace.CorporateCuratedGallery;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using SeleniumNUnitConsoleApp;
+using System;
 
 namespace DailySiteCheckup.TestCase
 {
@@ -24,50 +26,13 @@ namespace DailySiteCheckup.TestCase
             TestContext.Progress.WriteLine("Execute Signup Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
-
-            // Assert.IsTrue(contactUsPageHeader.Text.Contains("Create an Account"));
-            //click on signup link
+             //click on signup link
             IAction signuplinkClick = builder.Click(driver.FindElement(By.Id("createAccount"))).Build();
             signuplinkClick.Perform();
             Thread.Sleep(6000);
-            /* 1. send site name to ReadFromExcel and get the column names(input id for signupform)
-                  and its values grouped as per the site. Get only the site that is tested at the moment. 
-               2. get the column name from each group and pass each column name in a for loop
-               3. check Y/N for that column, If yes allow inside
-                    3.a. get the input id of that particular column
-                    3.b. based on the input id send keys to that particular inputs and fill the signup form.
-               4. If no, send back to for loop
-            */
-
-            //enter email
-            string tempEmailId = configuration["TempMailId"];
-            driver.FindElement(By.Id("email")).SendKeys(emailId);
-
-            //click send verification code 
-            IAction SendEmailVerification_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl_but_send_code"))).Build();
-            SendEmailVerification_action.Perform();
-            Thread.Sleep(3500);
-
-            // enter otp (temporarily ask for otp to enter manually)
-            TestContext.Progress.WriteLine("Enter the Email Verification Code for SignupTest.....");
-            //string Signup_EmailVerificationCode = Console.ReadLine();
-
-            //get the otp through mailsac API end points
-            ReadEmailForOtp readEmail = new ReadEmailForOtp();
-            var task = readEmail.ReadMailsacEmailAPIAsync(emailId);
-            var OTP_input = task.Result;
-            string Signup_EmailVerificationCode = OTP_input.Substring(0, 4);
-            TestContext.Progress.WriteLine("Email OTP is..." + Signup_EmailVerificationCode);
-            Thread.Sleep(1000);
-            driver.FindElement(By.Id("VerificationCode")).SendKeys(Signup_EmailVerificationCode);
-
-            IAction verifycode_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl_but_verify_code"))).Build();
-            verifycode_action.Perform();
-            Thread.Sleep(3500);
-
+            EmailVerification(driver,builder,emailId);
             // enter other fileds
-            /* these fields has to be populated from an excel containing
-             Mail id, password, fname and surname  */
+            ProcessSignupFields(driver,builder);
             driver.FindElement(By.Id("newPassword")).SendKeys(configuration["FirstPassword"]);
             driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
             driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
@@ -105,6 +70,87 @@ namespace DailySiteCheckup.TestCase
             }
 
 
+        }
+        public void ProcessSignupFields(IWebDriver driver, Actions builder)
+        {
+            string url; 
+            Dictionary<string, Dictionary<string, string>> SignupDetailsDict = ReadFromExcel.SignupDetailsDic;
+            foreach (var kvp in SignupDetailsDict)
+            {
+                url =kvp.Key;
+                Console.WriteLine($"Key: {kvp.Key}");
+                foreach (var innerKvp in kvp.Value)
+                {
+                    if (innerKvp.Key == "New_Pwd" && innerKvp.Value == "Y")
+                    {
+                        driver.FindElement(By.Id("newPassword")).SendKeys(configuration["FirstPassword"]);
+                    }
+                    if (innerKvp.Key == "Given_Name" && innerKvp.Value == "Y")
+                        driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
+                    if (innerKvp.Key == "Surname" && innerKvp.Value == "Y")
+                        driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
+                    if (innerKvp.Key == "Mobile_Num" && innerKvp.Value == "Y")
+                        driver.FindElement(By.Id("mobile")).SendKeys(configuration["mobile"]);
+                    if (innerKvp.Key == "Middle_Name" && innerKvp.Value == "Y")
+                        driver.FindElement(By.Id("extension_middlename")).SendKeys(configuration["middle_name"]);
+                    if (innerKvp.Key == "NIE" && innerKvp.Value == "Y")
+                        driver.FindElement(By.Id("extension_nie")).SendKeys(configuration["NIE"]);
+                    // click on check box and radio buttons
+                    if (innerKvp.Key == "FirstConsent" && innerKvp.Value == "Y")
+                    {
+                        IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsented_True"))).Build();
+                        actionchkbox.Perform();
+                    }
+                    if (innerKvp.Key == "SecondConsent" && innerKvp.Value == "Y")
+                    {
+                        IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsentedSecond_True"))).Build();
+                        actionchkbox.Perform();
+                    }
+
+
+
+                    Console.WriteLine($"Header: {innerKvp.Key}, Value: {innerKvp.Value}");
+                }
+                ReadFromExcel.SignupDetailsDic.Remove(url);
+                break;
+            }
+
+        }
+        public void EmailVerification(IWebDriver driver, Actions builder, string emailId)
+        {
+
+            //enter email
+            string tempEmailId = configuration["TempMailId"];
+            driver.FindElement(By.Id("email")).SendKeys(emailId);
+
+            //click send verification code 
+            IAction SendEmailVerification_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl_but_send_code"))).Build();
+            SendEmailVerification_action.Perform();
+            Thread.Sleep(3500);
+
+            // enter otp (temporarily ask for otp to enter manually)
+            TestContext.Progress.WriteLine("Enter the Email Verification Code for SignupTest.....");
+            //string Signup_EmailVerificationCode = Console.ReadLine();
+
+            //get the otp through mailsac API end points
+            ReadEmailForOtp readEmail = new ReadEmailForOtp();
+            var task = readEmail.ReadMailsacEmailAPIAsync(emailId);
+            var OTP_input = task.Result;
+            string Signup_EmailVerificationCode = OTP_input.Substring(0, 4);
+            TestContext.Progress.WriteLine("Email OTP is..." + Signup_EmailVerificationCode);
+            Thread.Sleep(1000);
+            driver.FindElement(By.Id("VerificationCode")).SendKeys(Signup_EmailVerificationCode);
+
+            By elementLocator = By.Id("emailVerificationControl_but_verify_code"); // Check if verify code button is present after otp is entered
+            IWebElement element = driver.FindElement(elementLocator);
+            string styleAttributeValue = element.GetAttribute("style");
+            bool isDisplayNone = styleAttributeValue.Contains("display: none");
+            if (!isDisplayNone)
+            {
+                IAction verifycode_action = builder.Click(driver.FindElement(By.Id("emailVerificationControl_but_verify_code"))).Build();
+                verifycode_action.Perform();
+            }
+            Thread.Sleep(3500);
         }
 
 

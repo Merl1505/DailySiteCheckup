@@ -16,8 +16,8 @@ namespace DailySiteCheckup.Feature
         {
             // Build the configuration
 
-            string UpdateCounterFilepath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\Reports\\UpdateCounter.txt";
-            //string UpdateCounterFilepath = "C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\UpdateCounter.txt";
+            //string UpdateCounterFilepath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\Reports\\UpdateCounter.txt";
+            string UpdateCounterFilepath = "C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\UpdateCounter.txt";
             int counter = GetNextCounterValue(UpdateCounterFilepath);
             counter++;
             string testing_mail_id = configuration["email_prefix"] + counter + "@mailsac.com";

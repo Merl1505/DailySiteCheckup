@@ -28,7 +28,7 @@ namespace DailySiteCheckup.TestCase
         {
             //enter login credentials
 
-            driver.FindElement(By.Id("signInName")).SendKeys(emailId);
+            driver.FindElement(By.Id("signInName")).SendKeys("xxtt@mailsac.com");
             driver.FindElement(By.Id("password")).SendKeys(configuration["FirstPassword"]);
             Thread.Sleep(1000);
 

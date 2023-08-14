@@ -19,11 +19,13 @@ namespace SeleniumNUnitConsoleApp
         private IWebDriver driver;
         private Actions builder;
         public List<TestResult> testResults { get; set; }
-        public static string ProfileEditFlag { get; set; }
+       public static string ProfileEditFlag { get; set; }
         public string MailIdToTest { get; set; }
         public SeleniumTests()
         {
             testResults = new List<TestResult>();
+           
+            //SiteDetailsDictionary = new Dictionary<string, Dictionary<string, string>>();
         }
         [OneTimeSetUp]
         public void Setup()
@@ -41,7 +43,7 @@ namespace SeleniumNUnitConsoleApp
             SignupTest signupTest = new SignupTest();
             CreateTestingEmail createTestingEmail = new CreateTestingEmail();
             MailIdToTest = createTestingEmail.GenerateTestingEmail();
-            signupTest.MPGSiteSignupTest(driver, builder,MailIdToTest);
+            signupTest.MPGSiteSignupTest(driver, builder, MailIdToTest);
             Cleanup();
 
         }
@@ -51,7 +53,7 @@ namespace SeleniumNUnitConsoleApp
         {
             Setup();
             LoginTest logintest = new LoginTest();
-            logintest.MPGSiteLoginTest(driver, builder, testResults,MailIdToTest);
+            logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
         }
         [Test]
         [Order(6)]
@@ -105,18 +107,35 @@ namespace SeleniumNUnitConsoleApp
         [OneTimeTearDown]
         public void Cleanup()
         {
+          //  ReadFromExcel.SiteDetailsDic.Remove(url);
             driver.Quit();
         }
        
     }
 
-    class Program
+  public class Program
     {
-        static int Main(string[] args)
+        public static Dictionary<string, Dictionary<string, string>> SignupDetails = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, Dictionary<string, string>> SiteDetails = new Dictionary<string, Dictionary<string, string>>();
+
+        static void Main(string[] args)
         {
-            var testAssembly = Assembly.GetExecutingAssembly();
-            //Console.ReadLine();
-            return new AutoRun(testAssembly).Execute(args);
+            ReadFromExcel.ReturnSiteData();
+            SiteDetails = ReadFromExcel.SiteDetailsDic;
+            
+            SignupDetails = ReadFromExcel.SignupDetailsDic;
+            
+            //SiteDetailsDictionary = readFromExcel.GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
+
+            //seleniumTests.SiteDetailsDictionary = readFromExcel.GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
+            for (int i=0;i < SiteDetails.Count;i++)
+            {
+                var testAssembly = Assembly.GetExecutingAssembly();
+                var autoRun = new AutoRun(testAssembly);
+                autoRun.Execute(args);
+                Thread.Sleep(2000);
+            }
+          
         }
     }
 }
