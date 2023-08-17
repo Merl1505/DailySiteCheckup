@@ -11,6 +11,7 @@ namespace DailySiteCheckup.Feature
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
         int counter_val = 0;
+        public static string IsExcelEmpty { get; set; }
 
         public string GenerateTestingEmail()
         {
@@ -33,14 +34,18 @@ namespace DailySiteCheckup.Feature
                 // Read all lines from the file and store them in an array
                 string[] lines = File.ReadAllLines(UpdateCounterFilepath);
 
-                // Now, you can process the lines as needed
                 foreach (string line in lines)
                 {
                     if (line.Contains("current_counter"))
                     {
                         string[] currentCounter = line.Split(':');
                        counter_val = Convert.ToInt32(currentCounter[1]);
-                        break;
+                       // break;
+                    }
+                    if (line.Contains("IsExcelEmpty"))
+                    {
+                        string[] IsExcel = line.Split(':');
+                        IsExcelEmpty = IsExcel[1];
                     }
                 }
             }

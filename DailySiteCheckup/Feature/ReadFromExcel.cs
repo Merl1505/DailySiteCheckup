@@ -20,6 +20,7 @@ namespace DailySiteCheckup.Feature
        public static Dictionary<string, Dictionary<string, string>> SignupDetailsDic { get; set; }
         public static Dictionary<string, string>[] dictionaries = new Dictionary<string, string>[2];
         public static string SiteURL { get; set; }
+        public static string SiteName { get; set; }
         // public static Dictionary<string, Dictionary<string, string>>[] dictionaries { get; set; }
 
         public ReadFromExcel()
@@ -28,7 +29,6 @@ namespace DailySiteCheckup.Feature
             SiteDetailsDic = new Dictionary<string, Dictionary<string, string>>();
             SignupDetailsDic = new Dictionary<string, Dictionary<string, string>>();
            
-
             // ReturnSiteData();
         }
         public static void ReturnSiteData()

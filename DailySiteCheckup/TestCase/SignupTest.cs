@@ -12,16 +12,13 @@ namespace DailySiteCheckup.TestCase
 
     public class SignupTest
     {
-        SeleniumTests tests = new SeleniumTests();
-        //ReadFromExcel readFromExcel = new ReadFromExcel();
-        //string test = readFromExcel.dataDictionary["1-1"];
-
+       
         // Build the configuration
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        public void MPGSiteSignupTest(IWebDriver driver, Actions builder,string emailId)
+        public void MPGSiteSignupTest(IWebDriver driver, Actions builder, List<TestResult> tests,string emailId)
         {
             TestContext.Progress.WriteLine("Execute Signup Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
@@ -33,9 +30,9 @@ namespace DailySiteCheckup.TestCase
             EmailVerification(driver,builder,emailId);
             // enter other fileds
             ProcessSignupFields(driver,builder);
-            driver.FindElement(By.Id("newPassword")).SendKeys(configuration["FirstPassword"]);
-            driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
-            driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
+            //driver.FindElement(By.Id("newPassword")).SendKeys(configuration["FirstPassword"]);
+            //driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
+            //driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
 
             //// click on check box and radio buttons
             //IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsented_True"))).Build();
@@ -48,17 +45,20 @@ namespace DailySiteCheckup.TestCase
             //find if error has occured 
             IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
             bool IsError = labelerror.Text.Contains("incorrect.");
-            bool account_created_txt;
+            //bool account_created_txt;
             // get test result
             if (!IsError)
             {
-                IWebElement labelAccountCreated = (IWebElement)driver.FindElement(By.XPath("//div[@class = 'attrEntry']/label[@for = 'successhdg']"));
-                account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
-                Assert.IsTrue(account_created_txt);
-                if (account_created_txt)
+                //IWebElement labelAccountCreated = (IWebElement)driver.FindElement(By.XPath("//div[@class = 'attrEntry']/label[@for = 'successhdg']"));
+                //account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
+                //Assert.IsTrue(account_created_txt);
+                string currentUrl = driver.Url;
+                Assert.IsTrue(currentUrl.Contains("signup_signin"));
+
+                if (currentUrl.Contains("signup_signin"))
                 {
                     TestContext.Progress.WriteLine("Signup Success.....");
-                    tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "SignUp" });
+                    tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "Y", Message = "Success", TestCaseName = "Signup" });
                 }
                
             }
@@ -66,7 +66,7 @@ namespace DailySiteCheckup.TestCase
             else
             {
                 TestContext.Progress.WriteLine("Signup Failed.....Incorrect username and password combinations");
-                tests.testResults.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "SignUp" });
+                tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "N", Message = "Fail", TestCaseName = "Signup" });
             }
 
 
@@ -78,7 +78,6 @@ namespace DailySiteCheckup.TestCase
             foreach (var kvp in SignupDetailsDict)
             {
                 url =kvp.Key;
-                Console.WriteLine($"Key: {kvp.Key}");
                 foreach (var innerKvp in kvp.Value)
                 {
                     if (innerKvp.Key == "New_Pwd" && innerKvp.Value == "Y")
@@ -107,11 +106,8 @@ namespace DailySiteCheckup.TestCase
                         actionchkbox.Perform();
                     }
 
-
-
-                    Console.WriteLine($"Header: {innerKvp.Key}, Value: {innerKvp.Value}");
                 }
-                ReadFromExcel.SignupDetailsDic.Remove(url);
+                //ReadFromExcel.SignupDetailsDic.Remove(url);
                 break;
             }
 

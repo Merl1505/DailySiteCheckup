@@ -1,2 +1,3 @@
 current_counter:12
 last_generated_email:mpgsitehealthchecktest12@mailsac.com
+IsExcelEmpty:Y

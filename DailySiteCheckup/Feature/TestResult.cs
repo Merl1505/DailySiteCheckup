@@ -10,9 +10,15 @@ namespace DailySiteCheckup.Feature
     public class TestResult
     {
         public string SiteName { get; set; }
-        public string Status { get; set; }
+        public string SignUpStatus { get; set; }
+        public string LoginStatus { get; set; }
+        public string ProfileEditStatus { get; set; }
+        public string ForgotPwdStatus { get; set; }
+        public string UpdatePwdStatus { get; set; }
+        public string UpdatePhoneStatus { get; set; }
         public string Message { get; set; }
         public string TestCaseName { get; set; }
+        public string SiteURL { get; set; }
     }
     public class ReadMailsac
     {

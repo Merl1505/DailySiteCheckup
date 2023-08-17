@@ -11,6 +11,8 @@ namespace DailySiteCheckup.Feature
 {
     public class NavigateToSite
     {
+        private string siteName;
+
         public void NavigateToHomePage(IWebDriver driver, Actions builder)
         {
             string url;
@@ -27,8 +29,9 @@ namespace DailySiteCheckup.Feature
                 Console.WriteLine();
                 foreach (var innerKvp in kvp.Value)
                 {
-                    Console.WriteLine($"Header: {innerKvp.Key}, Value: {innerKvp.Value}");
-                    // check if cookies popup appear
+                    if (innerKvp.Key == "Site_Name")
+                        siteName = innerKvp.Value;
+                        // check if cookies popup appear
                     if (innerKvp.Key == "Cookie_Popup" && innerKvp.Value == "Y")
                     {
                         IWebElement CookiePopupelement = driver.FindElement(By.Id("onetrust-group-container"));
@@ -43,8 +46,8 @@ namespace DailySiteCheckup.Feature
                         break;
                     }
                 }
-                Console.WriteLine($"Key: {kvp.Key}");
-                ReadFromExcel.SiteDetailsDic.Remove(url);
+                ReadFromExcel.SiteURL = url;
+                ReadFromExcel.SiteName = siteName;
                 break;
             }
             

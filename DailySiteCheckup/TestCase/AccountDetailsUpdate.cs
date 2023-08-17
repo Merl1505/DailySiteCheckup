@@ -104,12 +104,14 @@ namespace DailySiteCheckup.TestCase
             if (hasDesiredClass)
             {
                 TestContext.Progress.WriteLine("Password updated successfully.....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Password Update" });
+                tests[0].UpdatePwdStatus = "Y";
+                //tests.Add(new TestResult { SiteName = "https://www.experis.com/", UpdatePwdStatus = "Y", Message = "Success", TestCaseName = "Password Update" });
             }
             else
             {
                 TestContext.Progress.WriteLine("Password update Failed.....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Password Update" });
+                tests[0].UpdatePwdStatus = "N";
+                //tests.Add(new TestResult { SiteName = "https://www.experis.com/", UpdatePwdStatus = "N", Message = "Fail", TestCaseName = "Password Update" });
             }
             // ChangePhone(driver, builder);
             TestContext.Progress.WriteLine("Password updated successfully.....");
@@ -129,7 +131,7 @@ namespace DailySiteCheckup.TestCase
             cntry_dropdown.Click();
             IWebElement option = driver.FindElement(By.XPath("//option[@value='+91']"));
             option.Click();
-            driver.FindElement(By.Id("number")).SendKeys("9842641321");
+            driver.FindElement(By.Id("number")).SendKeys("9842893449");
 
             // function to send verification code 
             IAction sendcode_action = builder.Click(driver.FindElement(By.Id("sendCode"))).Build();
@@ -152,12 +154,14 @@ namespace DailySiteCheckup.TestCase
             if (hasDesiredClass)
             {
                 TestContext.Progress.WriteLine("Phone Number Updated Successfully.....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Password Update" });
+                tests[0].UpdatePhoneStatus = "Y";
+                // tests.Add(new TestResult { SiteName = "https://www.experis.com/", UpdatePhoneStatus = "Y", Message = "Success", TestCaseName = "Phone Update" });
             }
             else
             {
                 TestContext.Progress.WriteLine("Phone Number Update Failed.....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Password Update" });
+                tests[0].UpdatePhoneStatus = "N";
+                //tests.Add(new TestResult { SiteName = "https://www.experis.com/", UpdatePhoneStatus = "N", Message = "Fail", TestCaseName = "Phone Update" });
             }
 
 
@@ -193,12 +197,14 @@ namespace DailySiteCheckup.TestCase
             if (hasDesiredClass)
             {
                 TestContext.Progress.WriteLine("First Name and Last Name updated Successfully.....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Password Update" });
+                tests[0].ProfileEditStatus = "Y";
+                //tests.Add(new TestResult { SiteName = "https://www.experis.com/", ProfileEditStatus = "Y", Message = "Success", TestCaseName = "Profile Update" });
             }
             else
             {
                 TestContext.Progress.WriteLine("Names update failed.....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Password Update" });
+                tests[0].ProfileEditStatus = "N";
+                //tests.Add(new TestResult { SiteName = "https://www.experis.com/", ProfileEditStatus = "N", Message = "Fail", TestCaseName = "Profile Update" });
             }
 
         }

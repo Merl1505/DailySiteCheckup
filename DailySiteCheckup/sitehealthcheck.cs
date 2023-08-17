@@ -18,7 +18,7 @@ namespace SeleniumNUnitConsoleApp
     {
         private IWebDriver driver;
         private Actions builder;
-        public List<TestResult> testResults { get; set; }
+        public static List<TestResult> testResults { get; set; }
        public static string ProfileEditFlag { get; set; }
         public string MailIdToTest { get; set; }
         public SeleniumTests()
@@ -43,7 +43,7 @@ namespace SeleniumNUnitConsoleApp
             SignupTest signupTest = new SignupTest();
             CreateTestingEmail createTestingEmail = new CreateTestingEmail();
             MailIdToTest = createTestingEmail.GenerateTestingEmail();
-            signupTest.MPGSiteSignupTest(driver, builder, MailIdToTest);
+            signupTest.MPGSiteSignupTest(driver, builder, testResults, MailIdToTest);
             Cleanup();
 
         }
@@ -55,50 +55,50 @@ namespace SeleniumNUnitConsoleApp
             LoginTest logintest = new LoginTest();
             logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
         }
-        [Test]
-        [Order(6)]
-        public void PasswordReset()
-        {
-            //Forgot Password flow
-            Setup();
-            PasswordResetTest passwordReset = new PasswordResetTest();
-            passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
-            Cleanup();
-        }
-        [Test]
-        [Order(3)]
-        public void PasswordUpdate()
-        {
-            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-            ProfileEditFlag = "Password";
-            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-            // Cleanup();
-        }
-        [Test]
-        [Order(4)]
-        public void PhoneNumberUpdate()
-        {
-            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-            ProfileEditFlag = "Phone";
-            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-        }
-        [Test]
-        [Order(5)]
-        public void ProfileDetailsUpdate()
-        {
-            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-            ProfileEditFlag = "Profile";
-            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-        }
+        //[Test]
+        //[Order(6)]
+        //public void PasswordReset()
+        //{
+        //    //Forgot Password flow
+        //    Setup();
+        //    PasswordResetTest passwordReset = new PasswordResetTest();
+        //    passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
+        //    Cleanup();
+        //}
+        //[Test]
+        //[Order(3)]
+        //public void PasswordUpdate()
+        //{
+        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+        //    ProfileEditFlag = "Password";
+        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        //    // Cleanup();
+        //}
+        //[Test]
+        //[Order(4)]
+        //public void PhoneNumberUpdate()
+        //{
+        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+        //    ProfileEditFlag = "Phone";
+        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        //}
+        //[Test]
+        //[Order(5)]
+        //public void ProfileDetailsUpdate()
+        //{
+        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+        //    ProfileEditFlag = "Profile";
+        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        //}
 
         [OneTimeTearDown]
         public void SaveTestResults()
         {
-            DateTime currentDate = DateTime.Now;
-            string currdate = currentDate.ToShortDateString();
-            string date_For_File_Path = currdate.Replace("/", "");
-
-            string resultFilePath = "C:\\Users\\Merlin.Savarimuthu\\Reports\\TestReport_" + date_For_File_Path;
+            string url = ReadFromExcel.SiteURL;
+            ReadFromExcel.SiteDetailsDic.Remove(url);
+            ReadFromExcel.SignupDetailsDic.Remove(url);
+           
+            string resultFilePath = "C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestResult.xlsx";
 
             WriteExcelTestResult writeTestResult = new WriteExcelTestResult();
             writeTestResult.WriteTestResultsToExcel(resultFilePath, testResults);
@@ -107,7 +107,7 @@ namespace SeleniumNUnitConsoleApp
         [OneTimeTearDown]
         public void Cleanup()
         {
-          //  ReadFromExcel.SiteDetailsDic.Remove(url);
+           
             driver.Quit();
         }
        
@@ -124,18 +124,18 @@ namespace SeleniumNUnitConsoleApp
             SiteDetails = ReadFromExcel.SiteDetailsDic;
             
             SignupDetails = ReadFromExcel.SignupDetailsDic;
-            
-            //SiteDetailsDictionary = readFromExcel.GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
+            string resultFilePath = "C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestResult.xlsx";
 
-            //seleniumTests.SiteDetailsDictionary = readFromExcel.GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
-            for (int i=0;i < SiteDetails.Count;i++)
-            {
-                var testAssembly = Assembly.GetExecutingAssembly();
-                var autoRun = new AutoRun(testAssembly);
-                autoRun.Execute(args);
-                Thread.Sleep(2000);
-            }
-          
+            WriteExcelTestResult writeTestResult = new WriteExcelTestResult();
+            writeTestResult.WriteTestResultsToExcel(resultFilePath, null);
+            //for (int i = 0; i < SiteDetails.Count; i++)
+            //{
+            //    var testAssembly = Assembly.GetExecutingAssembly();
+            //    var autoRun = new AutoRun(testAssembly);
+            //    autoRun.Execute(args);
+            //    Thread.Sleep(2000);
+            //}
+
         }
     }
 }

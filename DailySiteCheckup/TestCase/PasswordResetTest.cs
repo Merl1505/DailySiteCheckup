@@ -67,12 +67,14 @@ namespace DailySiteCheckup.TestCase
             if (currentUrl.Contains("signup_signin"))
             {
                 TestContext.Progress.WriteLine("Password reset success....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Password Reset" });
+                tests[0].ForgotPwdStatus = "Y";
+               // tests.Add(new TestResult { SiteName = "https://www.experis.com/", ForgotPwdStatus = "Y", Message = "Success", TestCaseName = "Password Reset" });
             }
             else
             {
                 TestContext.Progress.WriteLine("Password reset failed....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Password Reset" });
+                tests[0].ForgotPwdStatus = "N";
+               // tests.Add(new TestResult { SiteName = "https://www.experis.com/", ForgotPwdStatus = "N", Message = "Fail", TestCaseName = "Password Reset" });
             }
 
         }

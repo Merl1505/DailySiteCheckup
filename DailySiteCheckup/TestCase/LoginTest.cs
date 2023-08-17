@@ -1,5 +1,6 @@
 ﻿using DailySiteCheckup.Feature;
 using Microsoft.Extensions.Configuration;
+using Microsoft.SharePoint.Client;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -28,7 +29,7 @@ namespace DailySiteCheckup.TestCase
         {
             //enter login credentials
 
-            driver.FindElement(By.Id("signInName")).SendKeys("xxtt@mailsac.com");
+            driver.FindElement(By.Id("signInName")).SendKeys(emailId);
             driver.FindElement(By.Id("password")).SendKeys(configuration["FirstPassword"]);
             Thread.Sleep(1000);
 
@@ -47,12 +48,14 @@ namespace DailySiteCheckup.TestCase
             if (hasDesiredClass)
             {
                 TestContext.Progress.WriteLine("Login Success....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "Y", Message = "Success", TestCaseName = "Login" });
+                tests[0].LoginStatus = "Y";
+                //tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL,SiteName=ReadFromExcel.SiteName, LoginStatus = "Y", Message = "Success", TestCaseName = "Login" });
             }
             else
             {
                 TestContext.Progress.WriteLine("Login Failed....");
-                tests.Add(new TestResult { SiteName = "https://www.experis.com/", Status = "N", Message = "Fail", TestCaseName = "Login" });
+                tests[0].LoginStatus = "N";
+               // tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL,SiteName= ReadFromExcel.SiteName, LoginStatus = "N", Message = "Fail", TestCaseName = "Login" });
             }
             //PasswordChange pwdchange = new PasswordChange();
             //pwdchange.ChangePassword(driver, builder);
