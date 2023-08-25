@@ -4,6 +4,7 @@ using Microsoft.SharePoint.Marketplace.CorporateCuratedGallery;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 using SeleniumNUnitConsoleApp;
 using System;
 
@@ -45,7 +46,7 @@ namespace DailySiteCheckup.TestCase
             //find if error has occured 
             IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
             bool IsError = labelerror.Text.Contains("incorrect.");
-            //bool account_created_txt;
+           //bool account_created_txt;
             // get test result
             if (!IsError)
             {

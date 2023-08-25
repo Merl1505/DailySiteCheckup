@@ -34,7 +34,7 @@ namespace DailySiteCheckup.Feature
         public static void ReturnSiteData()
         {
             SiteDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
-            SignupDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 1);
+            SignupDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 2);
             //dictionaries[0] = SiteDetailsDic;
             //dictionaries[1] = SignupDetailsDic;
             //return dictionaries;

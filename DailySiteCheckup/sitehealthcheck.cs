@@ -65,15 +65,15 @@ namespace SeleniumNUnitConsoleApp
         //    passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
         //    Cleanup();
         //}
-        //[Test]
-        //[Order(3)]
-        //public void PasswordUpdate()
-        //{
-        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-        //    ProfileEditFlag = "Password";
-        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-        //    // Cleanup();
-        //}
+        [Test]
+        [Order(3)]
+        public void PasswordUpdate()
+        {
+            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+            ProfileEditFlag = "Password";
+            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+            // Cleanup();
+        }
         //[Test]
         //[Order(4)]
         //public void PhoneNumberUpdate()
@@ -82,14 +82,14 @@ namespace SeleniumNUnitConsoleApp
         //    ProfileEditFlag = "Phone";
         //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
         //}
-        //[Test]
-        //[Order(5)]
-        //public void ProfileDetailsUpdate()
-        //{
-        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-        //    ProfileEditFlag = "Profile";
-        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-        //}
+        [Test]
+        [Order(4)]
+        public void ProfileDetailsUpdate()
+        {
+            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+            ProfileEditFlag = "Profile";
+            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        }
 
         [OneTimeTearDown]
         public void SaveTestResults()
@@ -120,21 +120,19 @@ namespace SeleniumNUnitConsoleApp
 
         static void Main(string[] args)
         {
+            //SendEmail.SendReportViaOutlookMail();
             ReadFromExcel.ReturnSiteData();
             SiteDetails = ReadFromExcel.SiteDetailsDic;
-            
-            SignupDetails = ReadFromExcel.SignupDetailsDic;
-            string resultFilePath = "C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestResult.xlsx";
 
-            WriteExcelTestResult writeTestResult = new WriteExcelTestResult();
-            writeTestResult.WriteTestResultsToExcel(resultFilePath, null);
-            //for (int i = 0; i < SiteDetails.Count; i++)
-            //{
-            //    var testAssembly = Assembly.GetExecutingAssembly();
-            //    var autoRun = new AutoRun(testAssembly);
-            //    autoRun.Execute(args);
-            //    Thread.Sleep(2000);
-            //}
+            SignupDetails = ReadFromExcel.SignupDetailsDic;
+
+            for (int i = 0; i < SiteDetails.Count; i++)
+            {
+                var testAssembly = Assembly.GetExecutingAssembly();
+                var autoRun = new AutoRun(testAssembly);
+                autoRun.Execute(args);
+                Thread.Sleep(2000);
+            }
 
         }
     }

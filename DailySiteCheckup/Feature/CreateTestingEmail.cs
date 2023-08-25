@@ -40,13 +40,9 @@ namespace DailySiteCheckup.Feature
                     {
                         string[] currentCounter = line.Split(':');
                        counter_val = Convert.ToInt32(currentCounter[1]);
-                       // break;
+                       break;
                     }
-                    if (line.Contains("IsExcelEmpty"))
-                    {
-                        string[] IsExcel = line.Split(':');
-                        IsExcelEmpty = IsExcel[1];
-                    }
+                  
                 }
             }
             else

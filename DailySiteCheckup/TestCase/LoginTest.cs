@@ -4,6 +4,7 @@ using Microsoft.SharePoint.Client;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 
 namespace DailySiteCheckup.TestCase
 {
@@ -36,7 +37,11 @@ namespace DailySiteCheckup.TestCase
             //click on submit
             IAction submitAction = builder.Click(driver.FindElement(By.Id("next"))).Build();
             submitAction.Perform();
-            Thread.Sleep(15000);
+            Thread.Sleep(25000);
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait.Until(driver => ((IJavaScriptExecutor)driver)
+                       .ExecuteScript("return document.readyState").Equals("complete"));
+
 
             // get test result
             IWebElement element = driver.FindElement(By.ClassName("login"));
