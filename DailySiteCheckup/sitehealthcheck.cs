@@ -30,8 +30,11 @@ namespace SeleniumNUnitConsoleApp
         [OneTimeSetUp]
         public void Setup()
         {
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument("--incognito"); // opens Chrome in incognito mode
+
             //Set up the ChromeDriver
-            driver = new ChromeDriver();
+            driver = new ChromeDriver(options);
             builder = new Actions(driver);
             
         }
@@ -55,16 +58,16 @@ namespace SeleniumNUnitConsoleApp
             LoginTest logintest = new LoginTest();
             logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
         }
-        //[Test]
-        //[Order(6)]
-        //public void PasswordReset()
-        //{
-        //    //Forgot Password flow
-        //    Setup();
-        //    PasswordResetTest passwordReset = new PasswordResetTest();
-        //    passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
-        //    Cleanup();
-        //}
+        [Test]
+        [Order(6)]
+        public void PasswordReset()
+        {
+            //Forgot Password flow
+            Setup();
+            PasswordResetTest passwordReset = new PasswordResetTest();
+            passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
+            Cleanup();
+        }
         [Test]
         [Order(3)]
         public void PasswordUpdate()
@@ -74,16 +77,16 @@ namespace SeleniumNUnitConsoleApp
             accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
             // Cleanup();
         }
-        //[Test]
-        //[Order(4)]
-        //public void PhoneNumberUpdate()
-        //{
-        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-        //    ProfileEditFlag = "Phone";
-        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-        //}
         [Test]
         [Order(4)]
+        public void PhoneNumberUpdate()
+        {
+            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+            ProfileEditFlag = "Phone";
+            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        }
+        [Test]
+        [Order(5)]
         public void ProfileDetailsUpdate()
         {
             AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();

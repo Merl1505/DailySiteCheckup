@@ -28,7 +28,7 @@ namespace DailySiteCheckup.TestCase
             string url = "https://www.experis.com/";
             driver.Navigate().GoToUrl(url);
             driver.Manage().Window.Maximize();
-            Thread.Sleep(6000);
+            Thread.Sleep(8000);
             // check if cookies popup appear
             //IWebElement CookiePopupelement = driver.FindElement(By.Id("onetrust-group-container"));
             //string CookiePopupAttr = CookiePopupelement.GetAttribute("id");
@@ -42,7 +42,7 @@ namespace DailySiteCheckup.TestCase
             //Click action - signup link click
             IAction user_iconclick_action = builder.Click(driver.FindElement(By.ClassName("user-icon"))).Build();
             user_iconclick_action.Perform();
-            Thread.Sleep(8000);
+            Thread.Sleep(10000);
 
             //login 
             //LoginTest login = new LoginTest();
@@ -62,8 +62,9 @@ namespace DailySiteCheckup.TestCase
             if (elementList.Count >= 3)
             {
                 elementList[2].Click();
-                Thread.Sleep(5000);
+                Thread.Sleep(7000);
             }
+
             // expand account section
             IAction password_change_action = builder.Click(driver.FindElement(By.Id("form0"))).Build();
             password_change_action.Perform();
@@ -82,7 +83,7 @@ namespace DailySiteCheckup.TestCase
             IWebElement button = driver.FindElement(By.XPath("(//div[@class = 'account-edit-block'])[3]//button[@class = 'primary-button']"));
             IAction update_pwd_action = builder.Click(button).Build();
             update_pwd_action.Perform();
-            Thread.Sleep(6000);
+            Thread.Sleep(7000);
 
             //update the password to input fields
             driver.FindElement(By.Id("oldPassword")).SendKeys(configuration["FirstPassword"]);
@@ -92,7 +93,7 @@ namespace DailySiteCheckup.TestCase
             //click on continue
             IAction continue_action = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             continue_action.Perform();
-            Thread.Sleep(20000);
+            Thread.Sleep(25000);
 
             //check if user-icon is present return assert true
             IWebElement element = driver.FindElement(By.ClassName("login"));
@@ -124,7 +125,7 @@ namespace DailySiteCheckup.TestCase
             IWebElement button = driver.FindElement(By.XPath("(//div[@class = 'account-edit-block'])[2]//button[@class = 'primary-button']"));
             IAction update_pwd_action = builder.Click(button).Build();
             update_pwd_action.Perform();
-            Thread.Sleep(5000);
+            Thread.Sleep(6000);
 
             //click on country dropdow
             IWebElement cntry_dropdown = driver.FindElement(By.Id("countryCode"));
@@ -174,7 +175,7 @@ namespace DailySiteCheckup.TestCase
             IWebElement button = driver.FindElement(By.XPath("(//div[@class = 'account-edit-block'])[1]//button[@class = 'primary-button']"));
             IAction update_pwd_action = builder.Click(button).Build();
             update_pwd_action.Perform();
-            Thread.Sleep(5000);
+            Thread.Sleep(7000);
 
             IWebElement fname = driver.FindElement(By.Id("givenName"));
             IWebElement sname = driver.FindElement(By.Id("surname"));
@@ -185,7 +186,7 @@ namespace DailySiteCheckup.TestCase
             //click on continue
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             submitAction.Perform();
-            Thread.Sleep(20000);
+            Thread.Sleep(30000);
 
             //check if user-icon is present return assert true
             IWebElement element = driver.FindElement(By.ClassName("login"));

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SeleniumNUnitConsoleApp;
+using OpenQA.Selenium.Support.UI;
 
 namespace DailySiteCheckup.Feature
 {
@@ -26,6 +27,7 @@ namespace DailySiteCheckup.Feature
                 driver.Navigate().GoToUrl(url);
                 driver.Manage().Window.Maximize();
                 Thread.Sleep(10000);
+                
                 Console.WriteLine();
                 foreach (var innerKvp in kvp.Value)
                 {
@@ -34,13 +36,15 @@ namespace DailySiteCheckup.Feature
                         // check if cookies popup appear
                     if (innerKvp.Key == "Cookie_Popup" && innerKvp.Value == "Y")
                     {
+                        Thread.Sleep(7000);
+
                         IWebElement CookiePopupelement = driver.FindElement(By.Id("onetrust-group-container"));
                         string CookiePopupAttr = CookiePopupelement.GetAttribute("id");
                         if (CookiePopupAttr == "onetrust-group-container")
                         {
                             IAction cookie_accept_action = builder.Click(driver.FindElement(By.Id("onetrust-accept-btn-handler"))).Build();
                             cookie_accept_action.Perform();
-                            Thread.Sleep(1000);
+                            Thread.Sleep(2000);
 
                         }
                         break;
@@ -54,7 +58,7 @@ namespace DailySiteCheckup.Feature
             //Click action - signup link click
             IAction user_iconclick_action = builder.Click(driver.FindElement(By.ClassName("user-icon"))).Build();
             user_iconclick_action.Perform();
-            Thread.Sleep(8000);
+            Thread.Sleep(10000);
 
         }
     }

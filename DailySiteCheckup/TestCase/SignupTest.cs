@@ -58,7 +58,7 @@ namespace DailySiteCheckup.TestCase
 
                 if (currentUrl.Contains("signup_signin"))
                 {
-                    TestContext.Progress.WriteLine("Signup Success.....");
+                    TestContext.Progress.WriteLine("Signup Success.....Email Id is :"+ emailId);
                     tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "Y", Message = "Success", TestCaseName = "Signup" });
                 }
                
@@ -78,40 +78,52 @@ namespace DailySiteCheckup.TestCase
             Dictionary<string, Dictionary<string, string>> SignupDetailsDict = ReadFromExcel.SignupDetailsDic;
             foreach (var kvp in SignupDetailsDict)
             {
-                url =kvp.Key;
+                url = kvp.Key;
                 foreach (var innerKvp in kvp.Value)
                 {
-                    if (innerKvp.Key == "New_Pwd" && innerKvp.Value == "Y")
+                    if (innerKvp.Key == "New_Password" && innerKvp.Value != "null")
                     {
-                        driver.FindElement(By.Id("newPassword")).SendKeys(configuration["FirstPassword"]);
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["FirstPassword"]);
                     }
-                    if (innerKvp.Key == "Given_Name" && innerKvp.Value == "Y")
-                        driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
-                    if (innerKvp.Key == "Surname" && innerKvp.Value == "Y")
-                        driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
-                    if (innerKvp.Key == "Mobile_Num" && innerKvp.Value == "Y")
-                        driver.FindElement(By.Id("mobile")).SendKeys(configuration["mobile"]);
-                    if (innerKvp.Key == "Middle_Name" && innerKvp.Value == "Y")
-                        driver.FindElement(By.Id("extension_middlename")).SendKeys(configuration["middle_name"]);
-                    if (innerKvp.Key == "NIE" && innerKvp.Value == "Y")
-                        driver.FindElement(By.Id("extension_nie")).SendKeys(configuration["NIE"]);
+                    if (innerKvp.Key == "Given_Name" && innerKvp.Value != "null")
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["FirstName"]);
+                    if (innerKvp.Key == "Surname" && innerKvp.Value != "null")
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["SecondName"]);
+                    if (innerKvp.Key == "Mobile_Num" && innerKvp.Value != "null")
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["mobile"]);
+                    if (innerKvp.Key == "Middle_Name" && innerKvp.Value != "null")
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["middle_name"]);
+                    if (innerKvp.Key == "NIE" && innerKvp.Value != "null")
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["NIE"]);
                     // click on check box and radio buttons
-                    if (innerKvp.Key == "FirstConsent" && innerKvp.Value == "Y")
+                    IAction actionchkbox;
+                    if (innerKvp.Key == "FirstConsent" && innerKvp.Value != "null")
                     {
-                        IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsented_True"))).Build();
+                        Thread.Sleep(1000);
+                        actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
                         actionchkbox.Perform();
                     }
-                    if (innerKvp.Key == "SecondConsent" && innerKvp.Value == "Y")
+                    if (innerKvp.Key == "SecondConsent" && innerKvp.Value != "null")
                     {
-                        IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsentedSecond_True"))).Build();
+                        Thread.Sleep(1000);
+                        actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
                         actionchkbox.Perform();
                     }
+                    if (innerKvp.Key == "ThirdConsent" && innerKvp.Value != "null")
+                    {
+                        Thread.Sleep(1000);
+                        actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
+                        actionchkbox.Perform();
+                    }
+                    if (innerKvp.Key == "RadioButton1" && innerKvp.Value != "null")
+                    {
+                        IWebElement radioButton = driver.FindElement(By.Id(innerKvp.Value)); // Replace with your actual selector
 
+                    }
+                    //ReadFromExcel.SignupDetailsDic.Remove(url);
+                    break;
                 }
-                //ReadFromExcel.SignupDetailsDic.Remove(url);
-                break;
             }
-
         }
         public void EmailVerification(IWebDriver driver, Actions builder, string emailId)
         {

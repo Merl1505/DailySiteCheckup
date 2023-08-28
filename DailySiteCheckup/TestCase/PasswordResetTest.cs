@@ -9,7 +9,6 @@ namespace DailySiteCheckup.TestCase
 {
     public class PasswordResetTest
     {
-        SeleniumTests tests = new SeleniumTests();
         // Build the configuration
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

@@ -37,12 +37,8 @@ namespace DailySiteCheckup.TestCase
             //click on submit
             IAction submitAction = builder.Click(driver.FindElement(By.Id("next"))).Build();
             submitAction.Perform();
-            Thread.Sleep(25000);
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            wait.Until(driver => ((IJavaScriptExecutor)driver)
-                       .ExecuteScript("return document.readyState").Equals("complete"));
-
-
+            Thread.Sleep(30000);
+            
             // get test result
             IWebElement element = driver.FindElement(By.ClassName("login"));
             // Get the value of the "class" attribute
