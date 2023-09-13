@@ -13,6 +13,7 @@ namespace DailySiteCheckup.Feature
     public class NavigateToSite
     {
         private string siteName;
+        private string IsSignupPageCookiePopup;
 
         public void NavigateToHomePage(IWebDriver driver, Actions builder)
         {
@@ -33,25 +34,19 @@ namespace DailySiteCheckup.Feature
                 {
                     if (innerKvp.Key == "Site_Name")
                         siteName = innerKvp.Value;
-                        // check if cookies popup appear
+                    if (innerKvp.Key == "Signup_page_cookie_popup")
+                        IsSignupPageCookiePopup = innerKvp.Value;
+                    // check if cookies popup appear
                     if (innerKvp.Key == "Cookie_Popup" && innerKvp.Value == "Y")
                     {
                         Thread.Sleep(7000);
-
-                        IWebElement CookiePopupelement = driver.FindElement(By.Id("onetrust-group-container"));
-                        string CookiePopupAttr = CookiePopupelement.GetAttribute("id");
-                        if (CookiePopupAttr == "onetrust-group-container")
-                        {
-                            IAction cookie_accept_action = builder.Click(driver.FindElement(By.Id("onetrust-accept-btn-handler"))).Build();
-                            cookie_accept_action.Perform();
-                            Thread.Sleep(2000);
-
-                        }
+                        ClickAcceptAllCookies(driver, builder);
                         break;
                     }
                 }
                 ReadFromExcel.SiteURL = url;
                 ReadFromExcel.SiteName = siteName;
+                ReadFromExcel.IsSignupPageCookiePopup = IsSignupPageCookiePopup;
                 break;
             }
             
@@ -60,6 +55,19 @@ namespace DailySiteCheckup.Feature
             user_iconclick_action.Perform();
             Thread.Sleep(10000);
 
+        }
+        public void ClickAcceptAllCookies(IWebDriver driver, Actions builder)
+        {
+
+            IWebElement CookiePopupelement = driver.FindElement(By.Id("onetrust-group-container"));
+            string CookiePopupAttr = CookiePopupelement.GetAttribute("id");
+            if (CookiePopupAttr == "onetrust-group-container")
+            {
+                IAction cookie_accept_action = builder.Click(driver.FindElement(By.Id("onetrust-accept-btn-handler"))).Build();
+                cookie_accept_action.Perform();
+                Thread.Sleep(2000);
+
+            }
         }
     }
 }

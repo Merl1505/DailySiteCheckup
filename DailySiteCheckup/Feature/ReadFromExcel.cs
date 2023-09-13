@@ -21,6 +21,7 @@ namespace DailySiteCheckup.Feature
         public static Dictionary<string, string>[] dictionaries = new Dictionary<string, string>[2];
         public static string SiteURL { get; set; }
         public static string SiteName { get; set; }
+        public static string IsSignupPageCookiePopup { get; set; }
         // public static Dictionary<string, Dictionary<string, string>>[] dictionaries { get; set; }
 
         public ReadFromExcel()
@@ -34,7 +35,7 @@ namespace DailySiteCheckup.Feature
         public static void ReturnSiteData()
         {
             SiteDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 0);
-            SignupDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 2);
+            SignupDetailsDic = GroupSiteandColumns("C:\\Users\\Merlin.Savarimuthu\\Reports\\EmailSetting\\SiteCheck_TestData.xlsx", 1);
             //dictionaries[0] = SiteDetailsDic;
             //dictionaries[1] = SignupDetailsDic;
             //return dictionaries;

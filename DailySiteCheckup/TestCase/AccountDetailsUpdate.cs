@@ -11,6 +11,8 @@ using SeleniumNUnitConsoleApp;
 using OpenQA.Selenium.Support.UI;
 using NUnit.Framework;
 using Microsoft.Extensions.Configuration;
+using AngleSharp.Dom;
+
 
 namespace DailySiteCheckup.TestCase
 {
@@ -52,6 +54,7 @@ namespace DailySiteCheckup.TestCase
         }
         public void HoverUserIcon(IWebDriver driver, Actions builder, string ProfileEditFlag, List<TestResult> tests)
         {
+            string url;
             //hover on user icon button
             IWebElement elementToHover = driver.FindElement(By.ClassName("user-icon"));
             builder.MoveToElement(elementToHover).Perform();
@@ -66,8 +69,22 @@ namespace DailySiteCheckup.TestCase
             }
 
             // expand account section
-            IAction password_change_action = builder.Click(driver.FindElement(By.Id("form0"))).Build();
-            password_change_action.Perform();
+            By elementLocator = By.Id("form0");
+            var matchingElements = driver.FindElements(elementLocator);
+            bool isElementPresent = matchingElements.Count > 0;
+            if(isElementPresent)
+            {
+                IAction password_change_action = builder.Click(driver.FindElement(By.Id("form0"))).Build();
+                password_change_action.Perform();
+            }
+            else
+            {
+                url = ReadFromExcel.SiteURL + "/candidate/account-settings";
+                driver.Navigate().GoToUrl(url);
+                driver.Manage().Window.Maximize();
+            }
+
+            
             Thread.Sleep(1000);
             if (ProfileEditFlag == "Password")
                 ChangePassword(driver, builder, tests);
@@ -138,6 +155,8 @@ namespace DailySiteCheckup.TestCase
             IAction sendcode_action = builder.Click(driver.FindElement(By.Id("sendCode"))).Build();
             sendcode_action.Perform();
             TestContext.Progress.WriteLine("Enter the OTP sent to the mobile number.....");
+            //MessageBox.Show("Please enter the otp sent to your mobile number");
+
             string phoneNumChange_ver_code = Console.ReadLine();
             driver.FindElement(By.Id("verificationCode")).SendKeys(phoneNumChange_ver_code);
             IAction confirmCode_action = builder.Click(driver.FindElement(By.Id("verifyCode"))).Build();

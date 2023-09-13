@@ -10,6 +10,9 @@ using System.Reflection;
 using System;
 using System.IO;
 using System.Runtime;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
+using DailySiteCheckup.Helper;
 
 namespace SeleniumNUnitConsoleApp
 {
@@ -30,6 +33,7 @@ namespace SeleniumNUnitConsoleApp
         [OneTimeSetUp]
         public void Setup()
         {
+            new DriverManager().SetUpDriver(new ChromeConfig());
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--incognito"); // opens Chrome in incognito mode
 
@@ -112,8 +116,30 @@ namespace SeleniumNUnitConsoleApp
         {
            
             driver.Quit();
+            Thread.Sleep(5000);
         }
-       
+        public static void SendEmail(string smtpServer)
+        {
+            //Send teh High priority Email  
+            SendEmail mailMan = new SendEmail(smtpServer);
+
+            EmailSendConfigure myConfig = new EmailSendConfigure();
+            // replace with your email userName  
+            myConfig.ClientCredentialUserName = "merlin.savarimuthu@manpowergroup.com";
+            // replace with your email account password
+            myConfig.ClientCredentialPassword = "Jebin@1003MPG";
+            myConfig.TOs = new string[] { "merlin.savarimuthu@manpowergroup.com" };
+            myConfig.CCs = new string[] { };
+            myConfig.From = "merlin.savarimuthu@manpowergroup.com";
+            myConfig.FromDisplayName = "Merlin";
+            myConfig.Priority = System.Net.Mail.MailPriority.Normal;
+            myConfig.Subject = "Daily site health check test";
+
+            EmailContent myContent = new EmailContent();
+            myContent.Content = "This is a test message from DailySite Check Application";
+
+            mailMan.SendMail(myConfig, myContent);
+        }
     }
 
   public class Program
@@ -123,13 +149,13 @@ namespace SeleniumNUnitConsoleApp
 
         static void Main(string[] args)
         {
-            //SendEmail.SendReportViaOutlookMail();
+            //SeleniumTests.SendEmail("smtp-mail.outlook.com");
             ReadFromExcel.ReturnSiteData();
             SiteDetails = ReadFromExcel.SiteDetailsDic;
-
+            int siteDetailsCount = SiteDetails.Count;
             SignupDetails = ReadFromExcel.SignupDetailsDic;
 
-            for (int i = 0; i < SiteDetails.Count; i++)
+            for (int i = 0; i < siteDetailsCount; i++)
             {
                 var testAssembly = Assembly.GetExecutingAssembly();
                 var autoRun = new AutoRun(testAssembly);

@@ -24,6 +24,12 @@ namespace DailySiteCheckup.TestCase
             TestContext.Progress.WriteLine("Execute Signup Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
+            //check if sign up page has cookie popup
+            if(ReadFromExcel.IsSignupPageCookiePopup == "Y")
+            {
+                navigateToSite.ClickAcceptAllCookies(driver, builder);
+            }
+
              //click on signup link
             IAction signuplinkClick = builder.Click(driver.FindElement(By.Id("createAccount"))).Build();
             signuplinkClick.Perform();
@@ -42,7 +48,7 @@ namespace DailySiteCheckup.TestCase
             //click on submit
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             submitAction.Perform();
-            Thread.Sleep(5000);
+            Thread.Sleep(10000);
             //find if error has occured 
             IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
             bool IsError = labelerror.Text.Contains("incorrect.");
@@ -54,9 +60,9 @@ namespace DailySiteCheckup.TestCase
                 //account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
                 //Assert.IsTrue(account_created_txt);
                 string currentUrl = driver.Url;
-                Assert.IsTrue(currentUrl.Contains("signup_signin"));
+                Assert.IsTrue(currentUrl.Contains("signup_signin") || currentUrl.Contains("SIGNUP_SIGNIN"));
 
-                if (currentUrl.Contains("signup_signin"))
+                if (currentUrl.Contains("signup_signin") || currentUrl.Contains("SIGNUP_SIGNIN"))
                 {
                     TestContext.Progress.WriteLine("Signup Success.....Email Id is :"+ emailId);
                     tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "Y", Message = "Success", TestCaseName = "Signup" });
@@ -96,7 +102,7 @@ namespace DailySiteCheckup.TestCase
                     if (innerKvp.Key == "NIE" && innerKvp.Value != "null")
                         driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["NIE"]);
                     // click on check box and radio buttons
-                    IAction actionchkbox;
+                    IAction actionchkbox; IWebElement radioButton;
                     if (innerKvp.Key == "FirstConsent" && innerKvp.Value != "null")
                     {
                         Thread.Sleep(1000);
@@ -117,12 +123,29 @@ namespace DailySiteCheckup.TestCase
                     }
                     if (innerKvp.Key == "RadioButton1" && innerKvp.Value != "null")
                     {
-                        IWebElement radioButton = driver.FindElement(By.Id(innerKvp.Value)); // Replace with your actual selector
+                        //radioButton = driver.FindElement(By.Id(innerKvp.Value));
+                       
+                        radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
+                        string idval = radioButton.GetAttribute("id");
+                        radioButton.Click();
 
                     }
+                    if (innerKvp.Key == "RadioButton2" && innerKvp.Value != "null")
+                    {
+                        radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
+                        string idval = radioButton.GetAttribute("id");
+                        radioButton.Click();
+                    }
+                    if (innerKvp.Key == "RadioButton3" && innerKvp.Value != "null")
+                    {
+                        radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
+                        string idval = radioButton.GetAttribute("id");
+                        radioButton.Click();
+                    }
                     //ReadFromExcel.SignupDetailsDic.Remove(url);
-                    break;
+                   // break;
                 }
+                break;
             }
         }
         public void EmailVerification(IWebDriver driver, Actions builder, string emailId)

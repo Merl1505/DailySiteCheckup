@@ -47,6 +47,10 @@ namespace DailySiteCheckup.Feature
                         worksheet.Cells[lastRow + 1, 2].Value = testResults[i].SiteURL;
                         worksheet.Cells[lastRow + 1, 3].Value = testResults[i].SignUpStatus;
                         worksheet.Cells[lastRow + 1, 4].Value = testResults[i].LoginStatus == null ? "N" : testResults[i].LoginStatus;
+                        worksheet.Cells[lastRow + 1, 5].Value  = testResults[i].ForgotPwdStatus == null ? "N" : testResults[i].ForgotPwdStatus;
+                        worksheet.Cells[lastRow + 1, 6].Value  = testResults[i].ProfileEditStatus == null ? "N" : testResults[i].ProfileEditStatus;
+                        worksheet.Cells[lastRow + 1, 7].Value  = testResults[i].UpdatePhoneStatus == null ? "N" : testResults[i].UpdatePhoneStatus;
+                        worksheet.Cells[lastRow + 1, 8].Value = testResults[i].UpdatePwdStatus == null ? "N" : testResults[i].UpdatePwdStatus;
                     }
                 }
                 else
