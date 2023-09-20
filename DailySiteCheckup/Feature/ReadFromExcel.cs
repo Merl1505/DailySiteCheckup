@@ -22,6 +22,9 @@ namespace DailySiteCheckup.Feature
         public static string SiteURL { get; set; }
         public static string SiteName { get; set; }
         public static string IsSignupPageCookiePopup { get; set; }
+        public static string IsConsentPopup { get; set; }
+        public static string ConsentPopupChkBx1 { get; set; }
+        public static string ConsentPopupChkBx2 { get; set; }
         // public static Dictionary<string, Dictionary<string, string>>[] dictionaries { get; set; }
 
         public ReadFromExcel()

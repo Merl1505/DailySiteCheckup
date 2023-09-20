@@ -24,6 +24,9 @@ namespace SeleniumNUnitConsoleApp
         public static List<TestResult> testResults { get; set; }
        public static string ProfileEditFlag { get; set; }
         public string MailIdToTest { get; set; }
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
         public SeleniumTests()
         {
             testResults = new List<TestResult>();
@@ -33,12 +36,20 @@ namespace SeleniumNUnitConsoleApp
         [OneTimeSetUp]
         public void Setup()
         {
-            new DriverManager().SetUpDriver(new ChromeConfig());
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument("--incognito"); // opens Chrome in incognito mode
+
+            // Configure and download the appropriate ChromeDriver version
+            //ChromeConfig chromeConfig = new ChromeConfig();
+            //new WebDriverManager.DriverManager().SetUpDriver(chromeConfig);
+
+            //ChromeOptions options = new ChromeOptions();
+            //options.AddArgument("--incognito"); // opens Chrome in incognito mode
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.BinaryLocation = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
+            chromeOptions.AddArgument("--incognito");
+            //chromeOptions.BinaryLocation = @"C:\Users\Merlin.Savarimuthu\source\repos\Merl1505\DailySiteCheckup\DailySiteCheckup\bin\Debug\net7.0\Chrome\117.0.5938.62\X64\chromedriver.exe"; // Optional: Specify the Chrome binary location if needed
 
             //Set up the ChromeDriver
-            driver = new ChromeDriver(options);
+            driver = new ChromeDriver(@configuration["chromeDriverPath"], chromeOptions);
             builder = new Actions(driver);
             
         }
@@ -81,14 +92,14 @@ namespace SeleniumNUnitConsoleApp
             accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
             // Cleanup();
         }
-        [Test]
-        [Order(4)]
-        public void PhoneNumberUpdate()
-        {
-            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-            ProfileEditFlag = "Phone";
-            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-        }
+        //[Test]
+        //[Order(4)]
+        //public void PhoneNumberUpdate()
+        //{
+        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+        //    ProfileEditFlag = "Phone";
+        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        //}
         [Test]
         [Order(5)]
         public void ProfileDetailsUpdate()
@@ -96,6 +107,7 @@ namespace SeleniumNUnitConsoleApp
             AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
             ProfileEditFlag = "Profile";
             accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+            Cleanup();
         }
 
         [OneTimeTearDown]

@@ -19,7 +19,14 @@ namespace DailySiteCheckup.TestCase
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
 
-            //Clikc on forgot password link 
+            //check if login screen has cookie popup ( close the cookie popup to click
+            //forgot password link)
+            if (ReadFromExcel.IsSignupPageCookiePopup == "Y")
+            {
+                navigateToSite.ClickAcceptAllCookies(driver, builder);
+            }
+
+            //Click on forgot password link 
             IAction submitAction = builder.Click(driver.FindElement(By.Id("forgotPassword"))).Build();
             submitAction.Perform();
             Thread.Sleep(12000);

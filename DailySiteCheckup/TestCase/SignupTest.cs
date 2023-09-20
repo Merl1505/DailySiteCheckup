@@ -21,19 +21,22 @@ namespace DailySiteCheckup.TestCase
 
         public void MPGSiteSignupTest(IWebDriver driver, Actions builder, List<TestResult> tests,string emailId)
         {
+            bool IsError = false;
             TestContext.Progress.WriteLine("Execute Signup Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
-            //check if sign up page has cookie popup
-            if(ReadFromExcel.IsSignupPageCookiePopup == "Y")
+
+            //check if login screen has cookie popup ( close the cookie popup to click on the signup link)
+            if (ReadFromExcel.IsSignupPageCookiePopup == "Y")
             {
                 navigateToSite.ClickAcceptAllCookies(driver, builder);
             }
 
-             //click on signup link
+            //click on signup link
             IAction signuplinkClick = builder.Click(driver.FindElement(By.Id("createAccount"))).Build();
             signuplinkClick.Perform();
             Thread.Sleep(6000);
+           
             EmailVerification(driver,builder,emailId);
             // enter other fileds
             ProcessSignupFields(driver,builder);
@@ -51,7 +54,7 @@ namespace DailySiteCheckup.TestCase
             Thread.Sleep(10000);
             //find if error has occured 
             IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
-            bool IsError = labelerror.Text.Contains("incorrect.");
+            IsError = labelerror.Text.Contains("incorrect.");
            //bool account_created_txt;
             // get test result
             if (!IsError)
@@ -150,7 +153,7 @@ namespace DailySiteCheckup.TestCase
         }
         public void EmailVerification(IWebDriver driver, Actions builder, string emailId)
         {
-
+            Thread.Sleep(1000); 
             //enter email
             string tempEmailId = configuration["TempMailId"];
             driver.FindElement(By.Id("email")).SendKeys(emailId);

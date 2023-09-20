@@ -1,4 +1,5 @@
 ﻿using DailySiteCheckup.Feature;
+using DailySiteCheckup.Helper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SharePoint.Client;
 using NUnit.Framework;
@@ -21,6 +22,11 @@ namespace DailySiteCheckup.TestCase
             TestContext.Progress.WriteLine("Execute Login Test.....");
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
+            //check if login screen has cookie popup ( close the cookie popup to click on the login button)
+            if (ReadFromExcel.IsSignupPageCookiePopup == "Y")
+            {
+                navigateToSite.ClickAcceptAllCookies(driver, builder);
+            }
             EnterCredentials(driver, builder, tests, emailId);
             //ReadFromExcel readFromExcel = new ReadFromExcel();
             //string test = readFromExcel.dataDictionary["1-1"];
@@ -29,11 +35,11 @@ namespace DailySiteCheckup.TestCase
         public void EnterCredentials(IWebDriver driver, Actions builder, List<TestResult> tests, string emailId)
         {
             //enter login credentials
-
+            
             driver.FindElement(By.Id("signInName")).SendKeys(emailId);
             driver.FindElement(By.Id("password")).SendKeys(configuration["FirstPassword"]);
             Thread.Sleep(1000);
-
+            
             //click on submit
             IAction submitAction = builder.Click(driver.FindElement(By.Id("next"))).Build();
             submitAction.Perform();
@@ -60,7 +66,13 @@ namespace DailySiteCheckup.TestCase
             }
             //PasswordChange pwdchange = new PasswordChange();
             //pwdchange.ChangePassword(driver, builder);
-
+            Thread.Sleep(2000);
+            if(ReadFromExcel.IsConsentPopup == "Y")
+            {
+                SiteHelper siteHelper = new SiteHelper();
+                siteHelper.ConsentPopupComplete(driver, builder);
+            }
+           
         }
 
     }
