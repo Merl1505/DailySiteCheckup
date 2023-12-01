@@ -7,6 +7,7 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using SeleniumNUnitConsoleApp;
 using System;
+using System.CodeDom.Compiler;
 
 namespace DailySiteCheckup.TestCase
 {
@@ -83,6 +84,13 @@ namespace DailySiteCheckup.TestCase
         }
         public void ProcessSignupFields(IWebDriver driver, Actions builder)
         {
+            // check if the registration page is having a cookiepopup
+            NavigateToSite navigateToSite = new NavigateToSite();
+           
+            if (ReadFromExcel.IsRegistrationPageCookiePopup == "Y")
+            {
+                navigateToSite.ClickAcceptAllCookies(driver, builder);
+            }
             string url; 
             Dictionary<string, Dictionary<string, string>> SignupDetailsDict = ReadFromExcel.SignupDetailsDic;
             foreach (var kvp in SignupDetailsDict)
@@ -103,7 +111,12 @@ namespace DailySiteCheckup.TestCase
                     if (innerKvp.Key == "Middle_Name" && innerKvp.Value != "null")
                         driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["middle_name"]);
                     if (innerKvp.Key == "NIE" && innerKvp.Value != "null")
-                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(configuration["NIE"]);
+                    {
+                        
+                        string NIE_val = GenerateNIECombinations();
+                        driver.FindElement(By.Id(innerKvp.Value)).SendKeys(NIE_val);
+                    }
+                    
                     // click on check box and radio buttons
                     IAction actionchkbox; IWebElement radioButton;
                     if (innerKvp.Key == "FirstConsent" && innerKvp.Value != "null")
@@ -188,6 +201,20 @@ namespace DailySiteCheckup.TestCase
             Thread.Sleep(3500);
         }
 
+        public string GenerateNIECombinations()
+        {
+            string validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+            char[] result = new char[6];
 
+            for (int i = 0; i < 6; i++)
+            {
+                int index = random.Next(validCharacters.Length);
+                result[i] = validCharacters[index];
+            }
+
+            string randomString = new string(result);
+            return randomString;
+        }
     }
 }

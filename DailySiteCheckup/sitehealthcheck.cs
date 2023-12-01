@@ -7,12 +7,15 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using System.Reflection;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
 using System;
 using System.IO;
 using System.Runtime;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 using DailySiteCheckup.Helper;
+using WebDriverManager.Models.Chrome;
 
 namespace SeleniumNUnitConsoleApp
 {
@@ -30,26 +33,18 @@ namespace SeleniumNUnitConsoleApp
         public SeleniumTests()
         {
             testResults = new List<TestResult>();
-           
+          
             //SiteDetailsDictionary = new Dictionary<string, Dictionary<string, string>>();
         }
         [OneTimeSetUp]
-        public void Setup()
+        public async Task Setup()
         {
-
-            // Configure and download the appropriate ChromeDriver version
-            //ChromeConfig chromeConfig = new ChromeConfig();
-            //new WebDriverManager.DriverManager().SetUpDriver(chromeConfig);
-
-            //ChromeOptions options = new ChromeOptions();
-            //options.AddArgument("--incognito"); // opens Chrome in incognito mode
             var chromeOptions = new ChromeOptions();
-            chromeOptions.BinaryLocation = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
+            //chromeOptions.AddArgument("no-sandbox");
             chromeOptions.AddArgument("--incognito");
-            //chromeOptions.BinaryLocation = @"C:\Users\Merlin.Savarimuthu\source\repos\Merl1505\DailySiteCheckup\DailySiteCheckup\bin\Debug\net7.0\Chrome\117.0.5938.62\X64\chromedriver.exe"; // Optional: Specify the Chrome binary location if needed
+            new DriverManager().SetUpDriver(new ChromeConfig());
 
-            //Set up the ChromeDriver
-            driver = new ChromeDriver(@configuration["chromeDriverPath"], chromeOptions);
+            driver = new ChromeDriver(chromeOptions);
             builder = new Actions(driver);
             
         }
@@ -152,6 +147,26 @@ namespace SeleniumNUnitConsoleApp
 
             mailMan.SendMail(myConfig, myContent);
         }
+   
+        //public static void SendEmailViaWeb()
+        //{
+        //    IWebDriver Emaildriver = new ChromeDriver();
+        //    Emaildriver.Navigate().GoToUrl("https://outlook.office.com/");
+        //    // Navigate to the email compose page
+        //    Emaildriver.FindElement(By.ClassName("root-191")).Click();
+
+        //    // Fill in the recipient, subject, and email body
+        //    Emaildriver.FindElement(By.ClassName("aoWYQ")).SendKeys("merlin.savarimuthu@manpowergroup.com");
+        //    Emaildriver.FindElement(By.ClassName("g7toD")).SendKeys("merlin.savarimuthu@manpowergroup.com");
+        //    Emaildriver.FindElement(By.ClassName("ms-TextField-field")).SendKeys("Test Subject"); 
+        //    Emaildriver.FindElement(By.ClassName("DziEn")).SendKeys("This is the email body.");
+
+        //    // Click the "Send" button
+        //    Emaildriver.FindElement(By.ClassName("be51T")).Click();
+
+        //    Emaildriver.Quit();
+        //}
+   
     }
 
   public class Program
@@ -162,6 +177,7 @@ namespace SeleniumNUnitConsoleApp
         static void Main(string[] args)
         {
             //SeleniumTests.SendEmail("smtp-mail.outlook.com");
+            //SeleniumTests.SendEmailViaWeb();
             ReadFromExcel.ReturnSiteData();
             SiteDetails = ReadFromExcel.SiteDetailsDic;
             int siteDetailsCount = SiteDetails.Count;

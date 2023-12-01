@@ -22,6 +22,7 @@ namespace DailySiteCheckup.Feature
         public static string SiteURL { get; set; }
         public static string SiteName { get; set; }
         public static string IsSignupPageCookiePopup { get; set; }
+        public static string IsRegistrationPageCookiePopup { get; set; }
         public static string IsConsentPopup { get; set; }
         public static string ConsentPopupChkBx1 { get; set; }
         public static string ConsentPopupChkBx2 { get; set; }
@@ -77,7 +78,7 @@ namespace DailySiteCheckup.Feature
                             rowData.Add(header, value);
                         }
 
-                        // Get the key for the nested dictionary (e.g., a unique identifier)
+                        // Get the key for the nested dictionary
                         string key = worksheet.Cells[row, 1].Text; 
 
                         // Add the current row's dictionary to the nested dictionary

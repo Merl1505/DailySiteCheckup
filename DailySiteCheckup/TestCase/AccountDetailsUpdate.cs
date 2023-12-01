@@ -74,6 +74,7 @@ namespace DailySiteCheckup.TestCase
             bool isElementPresent = matchingElements.Count > 0;
             if(isElementPresent)
             {
+                Thread.Sleep(2000);
                 IAction password_change_action = builder.Click(driver.FindElement(By.Id("form0"))).Build();
                 password_change_action.Perform();
             }
@@ -82,6 +83,9 @@ namespace DailySiteCheckup.TestCase
                 url = ReadFromExcel.SiteURL + "/candidate/account-settings";
                 driver.Navigate().GoToUrl(url);
                 driver.Manage().Window.Maximize();
+                Thread.Sleep(2000);
+                IAction password_change_action = builder.Click(driver.FindElement(By.Id("form0"))).Build();
+                password_change_action.Perform();
             }
 
             
@@ -96,8 +100,12 @@ namespace DailySiteCheckup.TestCase
         public void ChangePassword(IWebDriver driver, Actions builder, List<TestResult> tests)
         {
             TestContext.Progress.WriteLine("Execute Password Update Test.....");
+            Thread.Sleep(5000);
             //Find the element inside third div and click the button inside that div
             IWebElement button = driver.FindElement(By.XPath("(//div[@class = 'account-edit-block'])[3]//button[@class = 'primary-button']"));
+            Actions actions = new Actions(driver);
+            actions.MoveToElement(button).Perform();
+
             IAction update_pwd_action = builder.Click(button).Build();
             update_pwd_action.Perform();
             Thread.Sleep(7000);
@@ -138,6 +146,7 @@ namespace DailySiteCheckup.TestCase
         public void ChangePhone(IWebDriver driver, Actions builder, List<TestResult> tests)
         {
             TestContext.Progress.WriteLine("Execute Phone Number update Test.....");
+            Thread.Sleep(5000);
             //Find the element inside third div and click the button inside that div
             IWebElement button = driver.FindElement(By.XPath("(//div[@class = 'account-edit-block'])[2]//button[@class = 'primary-button']"));
             IAction update_pwd_action = builder.Click(button).Build();
@@ -190,6 +199,7 @@ namespace DailySiteCheckup.TestCase
         {
             //Update first name and last names
             TestContext.Progress.WriteLine("Execute Names update Test.....");
+            Thread.Sleep(5000);
             //Find the element inside third div and click the button inside that div
             IWebElement button = driver.FindElement(By.XPath("(//div[@class = 'account-edit-block'])[1]//button[@class = 'primary-button']"));
             IAction update_pwd_action = builder.Click(button).Build();

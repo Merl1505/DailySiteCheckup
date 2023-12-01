@@ -1,14 +1,6 @@
-﻿using OpenQA.Selenium.Interactions;
+﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SeleniumNUnitConsoleApp;
-using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium.DevTools.V112.Debugger;
-using NUnit.Framework;
+using OpenQA.Selenium.Interactions;
 
 namespace DailySiteCheckup.Feature
 {
@@ -16,6 +8,7 @@ namespace DailySiteCheckup.Feature
     {
         private string siteName;
         private string IsSignupPageCookiePopup;
+        private string IsRegistrationPageCookiePopup;
         private string IsConsentPopup;
         public  string ConsentPopupChkBx1;
         public string ConsentPopupChkBx2;
@@ -41,6 +34,8 @@ namespace DailySiteCheckup.Feature
                         siteName = innerKvp.Value;
                     if (innerKvp.Key == "Signup_page_cookie_popup")
                         IsSignupPageCookiePopup = innerKvp.Value;
+                    if (innerKvp.Key == "Registration_page_cookie_popup")
+                        IsRegistrationPageCookiePopup = innerKvp.Value;
                     if (innerKvp.Key == "consent_popup_modal")
                         IsConsentPopup = innerKvp.Value;
                     if (innerKvp.Key == "consent_popup_checkbox1")
@@ -59,6 +54,7 @@ namespace DailySiteCheckup.Feature
                 ReadFromExcel.SiteURL = url;
                 ReadFromExcel.SiteName = siteName;
                 ReadFromExcel.IsSignupPageCookiePopup = IsSignupPageCookiePopup;
+                ReadFromExcel.IsRegistrationPageCookiePopup = IsRegistrationPageCookiePopup;
                 ReadFromExcel.IsConsentPopup = IsConsentPopup;
                 ReadFromExcel.ConsentPopupChkBx1 = ConsentPopupChkBx1;
                 ReadFromExcel.ConsentPopupChkBx2 = ConsentPopupChkBx2;
