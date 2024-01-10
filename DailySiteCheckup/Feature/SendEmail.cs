@@ -63,8 +63,9 @@ namespace DailySiteCheckup.Feature
                                   emailConfig.ClientCredentialUserName,
                                   emailConfig.ClientCredentialPassword);
             client.Host = m_HostName;
-            client.Port = 25;  // this is critical
-            client.EnableSsl = true;  // this is critical
+            client.Port = 587; 
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
 
             try
             {

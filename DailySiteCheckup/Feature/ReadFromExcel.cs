@@ -21,8 +21,8 @@ namespace DailySiteCheckup.Feature
         public static Dictionary<string, string>[] dictionaries = new Dictionary<string, string>[2];
         public static string SiteURL { get; set; }
         public static string SiteName { get; set; }
+        public static string IsLoginPageCookiePopup { get; set; }
         public static string IsSignupPageCookiePopup { get; set; }
-        public static string IsRegistrationPageCookiePopup { get; set; }
         public static string IsConsentPopup { get; set; }
         public static string ConsentPopupChkBx1 { get; set; }
         public static string ConsentPopupChkBx2 { get; set; }

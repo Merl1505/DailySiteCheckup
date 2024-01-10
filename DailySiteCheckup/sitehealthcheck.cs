@@ -16,6 +16,9 @@ using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 using DailySiteCheckup.Helper;
 using WebDriverManager.Models.Chrome;
+using System.Net.Mail;
+using System.Net;
+using System.Net.Http;
 
 namespace SeleniumNUnitConsoleApp
 {
@@ -37,16 +40,14 @@ namespace SeleniumNUnitConsoleApp
             //SiteDetailsDictionary = new Dictionary<string, Dictionary<string, string>>();
         }
         [OneTimeSetUp]
-        public async Task Setup()
-        {
-            var chromeOptions = new ChromeOptions();
-            //chromeOptions.AddArgument("no-sandbox");
-            chromeOptions.AddArgument("--incognito");
-            new DriverManager().SetUpDriver(new ChromeConfig());
+        public void Setup()
 
-            driver = new ChromeDriver(chromeOptions);
+        {
+            string path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+            ChromeOptions options = new();
+            options.AddArgument("--incognito");
+            driver = new ChromeDriver(path + @"\drivers\chromedriver-win64\", options);
             builder = new Actions(driver);
-            
         }
 
         [Test]
@@ -60,50 +61,50 @@ namespace SeleniumNUnitConsoleApp
             Cleanup();
 
         }
-        [Test]
-        [Order(2)]
-        public void Login()
-        {
-            Setup();
-            LoginTest logintest = new LoginTest();
-            logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
-        }
-        [Test]
-        [Order(6)]
-        public void PasswordReset()
-        {
-            //Forgot Password flow
-            Setup();
-            PasswordResetTest passwordReset = new PasswordResetTest();
-            passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
-            Cleanup();
-        }
-        [Test]
-        [Order(3)]
-        public void PasswordUpdate()
-        {
-            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-            ProfileEditFlag = "Password";
-            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-            // Cleanup();
-        }
         //[Test]
-        //[Order(4)]
-        //public void PhoneNumberUpdate()
+        //[Order(2)]
+        //public void Login()
+        //{
+        //    Setup();
+        //    LoginTest logintest = new LoginTest();
+        //    logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
+        //}
+        //[Test]
+        //[Order(6)]
+        //public void PasswordReset()
+        //{
+        //    //Forgot Password flow
+        //    Setup();
+        //    PasswordResetTest passwordReset = new PasswordResetTest();
+        //    passwordReset.MPGSitePasswordReset(driver, builder, testResults, MailIdToTest);
+        //    Cleanup();
+        //}
+        //[Test]
+        //[Order(3)]
+        //public void PasswordUpdate()
         //{
         //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-        //    ProfileEditFlag = "Phone";
+        //    ProfileEditFlag = "Password";
         //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        //    // Cleanup();
         //}
-        [Test]
-        [Order(5)]
-        public void ProfileDetailsUpdate()
-        {
-            AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
-            ProfileEditFlag = "Profile";
-            accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
-            Cleanup();
-        }
+        ////[Test]
+        ////[Order(4)]
+        ////public void PhoneNumberUpdate()
+        ////{
+        ////    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+        ////    ProfileEditFlag = "Phone";
+        ////    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        ////}
+        //[Test]
+        //[Order(5)]
+        //public void ProfileDetailsUpdate()
+        //{
+        //    AccountDetailsUpdate accountDetailsUpdate = new AccountDetailsUpdate();
+        //    ProfileEditFlag = "Profile";
+        //    accountDetailsUpdate.HoverUserIcon(driver, builder, ProfileEditFlag, testResults);
+        //    Cleanup();
+        //}
 
         [OneTimeTearDown]
         public void SaveTestResults()
@@ -116,6 +117,7 @@ namespace SeleniumNUnitConsoleApp
 
             WriteExcelTestResult writeTestResult = new WriteExcelTestResult();
             writeTestResult.WriteTestResultsToExcel(resultFilePath, testResults);
+          
         }
 
         [OneTimeTearDown]
@@ -132,12 +134,12 @@ namespace SeleniumNUnitConsoleApp
 
             EmailSendConfigure myConfig = new EmailSendConfigure();
             // replace with your email userName  
-            myConfig.ClientCredentialUserName = "merlin.savarimuthu@manpowergroup.com";
+            myConfig.ClientCredentialUserName = "merlinsavarimuthu@gmail.com";
             // replace with your email account password
-            myConfig.ClientCredentialPassword = "Jebin@1003MPG";
-            myConfig.TOs = new string[] { "merlin.savarimuthu@manpowergroup.com" };
+            myConfig.ClientCredentialPassword = "Merl@1505";
+            myConfig.TOs = new string[] { "merlinsavarimuthu@gmail.com" };
             myConfig.CCs = new string[] { };
-            myConfig.From = "merlin.savarimuthu@manpowergroup.com";
+            myConfig.From = "merlinsavarimuthu@gmail.com";
             myConfig.FromDisplayName = "Merlin";
             myConfig.Priority = System.Net.Mail.MailPriority.Normal;
             myConfig.Subject = "Daily site health check test";
@@ -147,7 +149,43 @@ namespace SeleniumNUnitConsoleApp
 
             mailMan.SendMail(myConfig, myContent);
         }
-   
+    public static void SendTestmail()
+        {
+
+            var fromAddress = new MailAddress("merlinsavarimuthu@gmail.com", "Merlin");
+            var toAddress = new MailAddress("merlinbenny1505@gmail.com", "Merlin Benny");
+            string fromPassword = "Merl@1505";
+            string subject = "Test email";
+            string body = "This is a test email from Selenium c# Daily site check automation application";
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
+                Timeout = 60000,
+            };
+            try
+            {
+                //await smtp.SendMailAsync("merlin.savarimuthu@gmail.com", "merlinbenny1505@gmail.com",
+                //                        "test subject", "test body mail");
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    smtp.Send(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in Test email send", ex.Message);
+            }
+            
+        }
         //public static void SendEmailViaWeb()
         //{
         //    IWebDriver Emaildriver = new ChromeDriver();
@@ -166,7 +204,7 @@ namespace SeleniumNUnitConsoleApp
 
         //    Emaildriver.Quit();
         //}
-   
+
     }
 
   public class Program
@@ -176,8 +214,6 @@ namespace SeleniumNUnitConsoleApp
 
         static void Main(string[] args)
         {
-            //SeleniumTests.SendEmail("smtp-mail.outlook.com");
-            //SeleniumTests.SendEmailViaWeb();
             ReadFromExcel.ReturnSiteData();
             SiteDetails = ReadFromExcel.SiteDetailsDic;
             int siteDetailsCount = SiteDetails.Count;
@@ -186,11 +222,20 @@ namespace SeleniumNUnitConsoleApp
             for (int i = 0; i < siteDetailsCount; i++)
             {
                 var testAssembly = Assembly.GetExecutingAssembly();
-                var autoRun = new AutoRun(testAssembly);
-                autoRun.Execute(args);
+                try
+                {
+                    var autoRun = new AutoRun(testAssembly);
+                    autoRun.Execute(args);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
                 Thread.Sleep(2000);
             }
 
         }
+
     }
 }

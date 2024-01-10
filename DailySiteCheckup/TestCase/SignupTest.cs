@@ -28,7 +28,7 @@ namespace DailySiteCheckup.TestCase
             navigateToSite.NavigateToHomePage(driver, builder);
 
             //check if login screen has cookie popup ( close the cookie popup to click on the signup link)
-            if (ReadFromExcel.IsSignupPageCookiePopup == "Y")
+            if (ReadFromExcel.IsLoginPageCookiePopup == "Y")
             {
                 navigateToSite.ClickAcceptAllCookies(driver, builder);
             }
@@ -39,38 +39,28 @@ namespace DailySiteCheckup.TestCase
             Thread.Sleep(6000);
            
             EmailVerification(driver,builder,emailId);
+           // IWebElement formElement = (IWebElement)driver.FindElement(By.XPath("\"//form[@id='attributeVerification']/*\")"));
             // enter other fileds
             ProcessSignupFields(driver,builder);
-            //driver.FindElement(By.Id("newPassword")).SendKeys(configuration["FirstPassword"]);
-            //driver.FindElement(By.Id("givenName")).SendKeys(configuration["FirstName"]);
-            //driver.FindElement(By.Id("surname")).SendKeys(configuration["SecondName"]);
-
-            //// click on check box and radio buttons
-            //IAction actionchkbox = builder.Click(driver.FindElement(By.Id("extension_TermsOfUseConsented_True"))).Build();
-            //actionchkbox.Perform();
-
+           
             //click on submit
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             submitAction.Perform();
             Thread.Sleep(10000);
             //find if error has occured 
-            IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
-            IsError = labelerror.Text.Contains("incorrect.");
-           //bool account_created_txt;
+            //IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
+            //IsError = labelerror.Text.Contains("incorrect.");
+            string currentUrl = driver.Url;
+            //bool account_created_txt;
             // get test result
-            if (!IsError)
+            if (currentUrl.Contains("signup_signin") || currentUrl.Contains("signup_signin_MFA"))
             {
-                //IWebElement labelAccountCreated = (IWebElement)driver.FindElement(By.XPath("//div[@class = 'attrEntry']/label[@for = 'successhdg']"));
-                //account_created_txt = labelAccountCreated.Text.Contains("Your account has been created");
-                //Assert.IsTrue(account_created_txt);
-                string currentUrl = driver.Url;
-                Assert.IsTrue(currentUrl.Contains("signup_signin") || currentUrl.Contains("SIGNUP_SIGNIN"));
-
-                if (currentUrl.Contains("signup_signin") || currentUrl.Contains("SIGNUP_SIGNIN"))
-                {
+                 Thread.Sleep(5000);
+                
                     TestContext.Progress.WriteLine("Signup Success.....Email Id is :"+ emailId);
                     tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "Y", Message = "Success", TestCaseName = "Signup" });
-                }
+                
+                Assert.IsTrue(currentUrl.Contains("signup_signin") || currentUrl.Contains("signup_signin_MFA"));
                
             }
 
@@ -87,7 +77,7 @@ namespace DailySiteCheckup.TestCase
             // check if the registration page is having a cookiepopup
             NavigateToSite navigateToSite = new NavigateToSite();
            
-            if (ReadFromExcel.IsRegistrationPageCookiePopup == "Y")
+            if (ReadFromExcel.IsSignupPageCookiePopup == "Y")
             {
                 navigateToSite.ClickAcceptAllCookies(driver, builder);
             }

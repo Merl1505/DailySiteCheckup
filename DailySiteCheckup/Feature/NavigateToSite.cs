@@ -7,8 +7,8 @@ namespace DailySiteCheckup.Feature
     public class NavigateToSite
     {
         private string siteName;
+        private string IsLoginPageCookiePopup;
         private string IsSignupPageCookiePopup;
-        private string IsRegistrationPageCookiePopup;
         private string IsConsentPopup;
         public  string ConsentPopupChkBx1;
         public string ConsentPopupChkBx2;
@@ -22,7 +22,7 @@ namespace DailySiteCheckup.Feature
             foreach (var kvp in SiteDetailsDictionary)
             {
                
-                url = kvp.Key;// redirecting to a url
+                url = kvp.Key;// redirecting to a home page of the website
                 driver.Navigate().GoToUrl(url);
                 driver.Manage().Window.Maximize();
                 Thread.Sleep(10000);
@@ -32,19 +32,19 @@ namespace DailySiteCheckup.Feature
                 {
                     if (innerKvp.Key == "Site_Name")
                         siteName = innerKvp.Value;
+                    if (innerKvp.Key == "Login_page_cookie_popup")
+                        IsLoginPageCookiePopup = innerKvp.Value;
                     if (innerKvp.Key == "Signup_page_cookie_popup")
                         IsSignupPageCookiePopup = innerKvp.Value;
-                    if (innerKvp.Key == "Registration_page_cookie_popup")
-                        IsRegistrationPageCookiePopup = innerKvp.Value;
                     if (innerKvp.Key == "consent_popup_modal")
                         IsConsentPopup = innerKvp.Value;
                     if (innerKvp.Key == "consent_popup_checkbox1")
                         ConsentPopupChkBx1 = innerKvp.Value;
                     if (innerKvp.Key == "consent_popup_checkbox2")
-                        ConsentPopupChkBx2 = innerKvp.Value;    
+                        ConsentPopupChkBx2 = innerKvp.Value;
 
                     // check if cookies popup appear
-                    if (innerKvp.Key == "Cookie_Popup" && innerKvp.Value == "Y")
+                    if (innerKvp.Key == "Home_page_cookie_popup" && innerKvp.Value == "Y")
                     {
                         Thread.Sleep(7000);
                         ClickAcceptAllCookies(driver, builder);
@@ -53,18 +53,18 @@ namespace DailySiteCheckup.Feature
                 }
                 ReadFromExcel.SiteURL = url;
                 ReadFromExcel.SiteName = siteName;
+                ReadFromExcel.IsLoginPageCookiePopup = IsLoginPageCookiePopup;
                 ReadFromExcel.IsSignupPageCookiePopup = IsSignupPageCookiePopup;
-                ReadFromExcel.IsRegistrationPageCookiePopup = IsRegistrationPageCookiePopup;
                 ReadFromExcel.IsConsentPopup = IsConsentPopup;
                 ReadFromExcel.ConsentPopupChkBx1 = ConsentPopupChkBx1;
                 ReadFromExcel.ConsentPopupChkBx2 = ConsentPopupChkBx2;
                 break;
             }
             
-            //Click action - signup link click
+            //Click user icon - redirects to login screen
             IAction user_iconclick_action = builder.Click(driver.FindElement(By.ClassName("user-icon"))).Build();
             user_iconclick_action.Perform();
-            Thread.Sleep(10000);
+            Thread.Sleep(13000);
 
         }
         public void ClickAcceptAllCookies(IWebDriver driver, Actions builder)
@@ -83,7 +83,7 @@ namespace DailySiteCheckup.Feature
                 }
             }
             else
-                TestContext.Progress.WriteLine("No cookie popup at signup screen....");
+                TestContext.Progress.WriteLine("No cookie popup....");
 
         }
     }
