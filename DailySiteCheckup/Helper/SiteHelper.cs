@@ -25,5 +25,20 @@ namespace DailySiteCheckup.Helper
                 Thread.Sleep(4000);
             }
         }
+    
+        public bool IsElementPresent(IWebDriver driver, string elementId)
+        {
+            Thread.Sleep(5000);
+
+            try
+            {
+                driver.FindElement(By.Id(elementId));
+                return true;
+            }
+            catch(NoSuchElementException) {
+                return false;
+            }
+
+        }
     }
 }

@@ -8,13 +8,15 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumNUnitConsoleApp;
 using System;
 using System.CodeDom.Compiler;
+using DailySiteCheckup.Helper;
+using AngleSharp.Dom;
 
 namespace DailySiteCheckup.TestCase
 {
 
     public class SignupTest
     {
-       
+        SiteHelper SiteHelper = new SiteHelper();
         // Build the configuration
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -47,30 +49,39 @@ namespace DailySiteCheckup.TestCase
             IAction submitAction = builder.Click(driver.FindElement(By.Id("continue"))).Build();
             submitAction.Perform();
             Thread.Sleep(10000);
-            //find if error has occured 
-            //IWebElement labelerror = (IWebElement)driver.FindElement(By.Id("claimVerificationServerError"));
-            //IsError = labelerror.Text.Contains("incorrect.");
             string currentUrl = driver.Url;
-            //bool account_created_txt;
-            // get test result
-            if (currentUrl.Contains("signup_signin") || currentUrl.Contains("signup_signin_MFA"))
-            {
-                 Thread.Sleep(5000);
-                
-                    TestContext.Progress.WriteLine("Signup Success.....Email Id is :"+ emailId);
-                    tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "Y", Message = "Success", TestCaseName = "Signup" });
-                
-                Assert.IsTrue(currentUrl.Contains("signup_signin") || currentUrl.Contains("signup_signin_MFA"));
-               
-            }
+            /* check if the next screen contains MFA verification screen.
+            If yes, redirect to VerifyMFA class and finally check for success message. 
+           If no, check for success message .
 
+           */
+
+            bool isMFAVerificationBtnPresent = driver.FindElements(By.Id("sendCode")).Count > 0;
+            if (isMFAVerificationBtnPresent)
+            {
+                TestContext.Progress.WriteLine("Leading to MFA Verification....");
+                VerifyMFA verifyMFA = new VerifyMFA();
+                verifyMFA.EnterCountryCodeAndPhoneNum(builder, driver);
+                
+            }
+            bool isSuccessMsgPresent = driver.FindElements(By.Id("successhdg")).Count > 0;
+            if (isSuccessMsgPresent) 
+            {
+                currentUrl = driver.Url;
+                TestContext.Progress.WriteLine("Signup Success.....Email Id is :" + emailId);
+
+                tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "Y", Message = "Success", TestCaseName = "Signup" });
+
+                Assert.IsTrue(true);
+
+            }
             else
             {
                 TestContext.Progress.WriteLine("Signup Failed.....Incorrect username and password combinations");
                 tests.Add(new TestResult { SiteURL = ReadFromExcel.SiteURL, SiteName = ReadFromExcel.SiteName, SignUpStatus = "N", Message = "Fail", TestCaseName = "Signup" });
+
             }
-
-
+           
         }
         public void ProcessSignupFields(IWebDriver driver, Actions builder)
         {
@@ -106,48 +117,59 @@ namespace DailySiteCheckup.TestCase
                         string NIE_val = GenerateNIECombinations();
                         driver.FindElement(By.Id(innerKvp.Value)).SendKeys(NIE_val);
                     }
-                    
-                    // click on check box and radio buttons
-                    IAction actionchkbox; IWebElement radioButton;
-                    if (innerKvp.Key == "FirstConsent" && innerKvp.Value != "null")
-                    {
-                        Thread.Sleep(1000);
-                        actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
-                        actionchkbox.Perform();
-                    }
-                    if (innerKvp.Key == "SecondConsent" && innerKvp.Value != "null")
-                    {
-                        Thread.Sleep(1000);
-                        actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
-                        actionchkbox.Perform();
-                    }
-                    if (innerKvp.Key == "ThirdConsent" && innerKvp.Value != "null")
-                    {
-                        Thread.Sleep(1000);
-                        actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
-                        actionchkbox.Perform();
-                    }
-                    if (innerKvp.Key == "RadioButton1" && innerKvp.Value != "null")
-                    {
-                        //radioButton = driver.FindElement(By.Id(innerKvp.Value));
-                       
-                        radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
-                        string idval = radioButton.GetAttribute("id");
-                        radioButton.Click();
+                    bool areCheckboxesPresent = driver.FindElements(By.CssSelector("input[type='checkbox']")).Count > 0;
+                    bool areRadioButtonsPresent = driver.FindElements(By.CssSelector("input[type='radio']")).Count > 0;
 
-                    }
-                    if (innerKvp.Key == "RadioButton2" && innerKvp.Value != "null")
+                    // click on check box and radio buttons
+                    IWebElement radioButton;
+                    if (areCheckboxesPresent)
                     {
-                        radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
-                        string idval = radioButton.GetAttribute("id");
-                        radioButton.Click();
+                        IAction actionchkbox;
+                        if (innerKvp.Key == "FirstConsent" && innerKvp.Value != "null")
+                        {
+                            Thread.Sleep(1000);
+                            bool findConsent = driver.FindElements(By.Id(innerKvp.Value)).Count > 0;
+                            actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
+                            actionchkbox.Perform();
+                        }
+                        if (innerKvp.Key == "SecondConsent" && innerKvp.Value != "null")
+                        {
+                            Thread.Sleep(1000);
+                            actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
+                            actionchkbox.Perform();
+                        }
+                        if (innerKvp.Key == "ThirdConsent" && innerKvp.Value != "null")
+                        {
+                            Thread.Sleep(1000);
+                            actionchkbox = builder.Click(driver.FindElement(By.Id(innerKvp.Value))).Build();
+                            actionchkbox.Perform();
+                        }
                     }
-                    if (innerKvp.Key == "RadioButton3" && innerKvp.Value != "null")
+                    if (areRadioButtonsPresent)
                     {
-                        radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
-                        string idval = radioButton.GetAttribute("id");
-                        radioButton.Click();
+                        if (innerKvp.Key == "RadioButton1" && innerKvp.Value != "null")
+                        {
+                            //radioButton = driver.FindElement(By.Id(innerKvp.Value));
+
+                            radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
+                            string idval = radioButton.GetAttribute("id");
+                            radioButton.Click();
+
+                        }
+                        if (innerKvp.Key == "RadioButton2" && innerKvp.Value != "null")
+                        {
+                            radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
+                            string idval = radioButton.GetAttribute("id");
+                            radioButton.Click();
+                        }
+                        if (innerKvp.Key == "RadioButton3" && innerKvp.Value != "null")
+                        {
+                            radioButton = driver.FindElement(By.CssSelector($"label[for='{innerKvp.Value}']"));
+                            string idval = radioButton.GetAttribute("id");
+                            radioButton.Click();
+                        }
                     }
+                   
                     //ReadFromExcel.SignupDetailsDic.Remove(url);
                    // break;
                 }

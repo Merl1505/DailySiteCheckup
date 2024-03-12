@@ -48,7 +48,7 @@ namespace DailySiteCheckup.Feature
                     {
                         Thread.Sleep(7000);
                         ClickAcceptAllCookies(driver, builder);
-                        break;
+                        //break;
                     }
                 }
                 ReadFromExcel.SiteURL = url;

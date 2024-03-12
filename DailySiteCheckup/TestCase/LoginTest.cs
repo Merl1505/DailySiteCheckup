@@ -23,7 +23,7 @@ namespace DailySiteCheckup.TestCase
             NavigateToSite navigateToSite = new NavigateToSite();
             navigateToSite.NavigateToHomePage(driver, builder);
             //check if login screen has cookie popup ( close the cookie popup to click on the login button)
-            if (ReadFromExcel.IsSignupPageCookiePopup == "Y")
+            if (ReadFromExcel.IsLoginPageCookiePopup == "Y")
             {
                 navigateToSite.ClickAcceptAllCookies(driver, builder);
             }
@@ -44,7 +44,15 @@ namespace DailySiteCheckup.TestCase
             IAction submitAction = builder.Click(driver.FindElement(By.Id("next"))).Build();
             submitAction.Perform();
             Thread.Sleep(30000);
-            
+
+            //verify MFA after login is done
+            bool isMFAVerificationBtnPresent = driver.FindElements(By.Id("sendCode")).Count > 0;
+            if(isMFAVerificationBtnPresent)
+            {
+                VerifyMFA verifyMFA = new VerifyMFA();
+                verifyMFA.VerifyMFA_AfterLogin(builder, driver);
+                Thread.Sleep(5000);
+            }
             // get test result
             IWebElement element = driver.FindElement(By.ClassName("login"));
             // Get the value of the "class" attribute

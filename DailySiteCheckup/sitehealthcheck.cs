@@ -20,6 +20,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Net.Http;
 
+
 namespace SeleniumNUnitConsoleApp
 {
     [TestFixture]
@@ -61,14 +62,14 @@ namespace SeleniumNUnitConsoleApp
             Cleanup();
 
         }
-        //[Test]
-        //[Order(2)]
-        //public void Login()
-        //{
-        //    Setup();
-        //    LoginTest logintest = new LoginTest();
-        //    logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
-        //}
+        [Test]
+        [Order(2)]
+        public void Login()
+        {
+            Setup();
+            LoginTest logintest = new LoginTest();
+            logintest.MPGSiteLoginTest(driver, builder, testResults, MailIdToTest);
+        }
         //[Test]
         //[Order(6)]
         //public void PasswordReset()
@@ -127,28 +128,28 @@ namespace SeleniumNUnitConsoleApp
             driver.Quit();
             Thread.Sleep(5000);
         }
-        public static void SendEmail(string smtpServer)
-        {
-            //Send teh High priority Email  
-            SendEmail mailMan = new SendEmail(smtpServer);
+        //public static void SendEmail(string smtpServer)
+        //{
+        //    //Send teh High priority Email  
+        //    SendEmail mailMan = new SendEmail(smtpServer);
 
-            EmailSendConfigure myConfig = new EmailSendConfigure();
-            // replace with your email userName  
-            myConfig.ClientCredentialUserName = "merlinsavarimuthu@gmail.com";
-            // replace with your email account password
-            myConfig.ClientCredentialPassword = "Merl@1505";
-            myConfig.TOs = new string[] { "merlinsavarimuthu@gmail.com" };
-            myConfig.CCs = new string[] { };
-            myConfig.From = "merlinsavarimuthu@gmail.com";
-            myConfig.FromDisplayName = "Merlin";
-            myConfig.Priority = System.Net.Mail.MailPriority.Normal;
-            myConfig.Subject = "Daily site health check test";
+        //    EmailSendConfigure myConfig = new EmailSendConfigure();
+        //    // replace with your email userName  
+        //    myConfig.ClientCredentialUserName = "merlinsavarimuthu@gmail.com";
+        //    // replace with your email account password
+        //    myConfig.ClientCredentialPassword = "Merl@1505";
+        //    myConfig.TOs = new string[] { "merlinsavarimuthu@gmail.com" };
+        //    myConfig.CCs = new string[] { };
+        //    myConfig.From = "merlinsavarimuthu@gmail.com";
+        //    myConfig.FromDisplayName = "Merlin";
+        //    myConfig.Priority = System.Net.Mail.MailPriority.Normal;
+        //    myConfig.Subject = "Daily site health check test";
 
-            EmailContent myContent = new EmailContent();
-            myContent.Content = "This is a test message from DailySite Check Application";
+        //    EmailContent myContent = new EmailContent();
+        //    myContent.Content = "This is a test message from DailySite Check Application";
 
-            mailMan.SendMail(myConfig, myContent);
-        }
+        //    mailMan.SendMail(myConfig, myContent);
+        //}
     public static void SendTestmail()
         {
 
@@ -214,6 +215,8 @@ namespace SeleniumNUnitConsoleApp
 
         static void Main(string[] args)
         {
+            SendEmail sendmail = new SendEmail("test");
+            sendmail.OpenOutlookAndDraftEmail();
             ReadFromExcel.ReturnSiteData();
             SiteDetails = ReadFromExcel.SiteDetailsDic;
             int siteDetailsCount = SiteDetails.Count;
